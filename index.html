@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第一个App - The First App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>第一个App</h1>
+            <p class="subtitle">The First App - Original Version</p>
+        </header>
+        
+        <main>
+            <section class="welcome">
+                <h2>欢迎使用第一个应用程序</h2>
+                <p>Welcome to The First Application</p>
+            </section>
+            
+            <section class="features">
+                <div class="feature-card">
+                    <h3>简单计算器</h3>
+                    <p>Simple Calculator</p>
+                    <div class="calculator">
+                        <input type="number" id="num1" placeholder="第一个数字">
+                        <select id="operation">
+                            <option value="+">+</option>
+                            <option value="-">-</option>
+                            <option value="*">×</option>
+                            <option value="/">/</option>
+                        </select>
+                        <input type="number" id="num2" placeholder="第二个数字">
+                        <button onclick="calculate()">计算 Calculate</button>
+                        <div id="result"></div>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>文本处理</h3>
+                    <p>Text Processing</p>
+                    <div class="text-processor">
+                        <textarea id="inputText" placeholder="输入文本... Enter text..."></textarea>
+                        <div class="text-controls">
+                            <button onclick="countText()">字符统计 Count</button>
+                            <button onclick="reverseText()">反转文本 Reverse</button>
+                            <button onclick="uppercaseText()">大写 Uppercase</button>
+                        </div>
+                        <div id="textResult"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2024 The First App - 原始版本 Original Version</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
