@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Engineering Assistant - BRAIN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .feature-engineering-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-section h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header-section p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background: #2980b9;
+        }
+
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .config-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .options-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .options-header {
+            background: #3498db;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .options-container {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .option-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .option-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+        }
+
+        .option-card.selected {
+            border-color: #27ae60;
+            background: #f1f8e9;
+        }
+
+        .option-card.editing {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-color: #f39c12;
+            background: #fef9e7;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .modal-overlay.active {
+            display: block;
+        }
+
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .option-number {
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .option-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .option-actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: #f39c12;
+            color: white;
+        }
+
+        .save-btn {
+            background: #27ae60;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .select-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .send-continue-btn {
+            background: #27ae60;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .option-content {
+            line-height: 1.6;
+        }
+
+        .option-field {
+            margin-bottom: 10px;
+        }
+
+        .option-field label {
+            font-weight: bold;
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .option-field input,
+        .option-field textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .option-field textarea {
+            resize: vertical;
+            min-height: 80px;
+            overflow: hidden;
+        }
+
+        .option-card.editing .option-field textarea {
+            min-height: 120px;
+            overflow-y: auto;
+        }
+
+        .auto-resize-textarea {
+            overflow: hidden;
+            resize: none;
+        }
+
+        .option-field.readonly input,
+        .option-field.readonly textarea {
+            background: #f8f9fa;
+            border-color: #e9ecef;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pipeline-status {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .pipeline-status h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+
+        .pipeline-step {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .pipeline-step strong {
+            color: #2c3e50;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification.success {
+            background: #27ae60;
+        }
+
+        .notification.error {
+            background: #e74c3c;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-message {
+            color: white;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .export-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .export-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .category-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .category-item {
+            background: #ecf0f1;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            border-left: 4px solid #3498db;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-actions button {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .empty-conversation {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        /* Operators Reference Modal Styles */
+        .operator-category {
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
+
+        .operator-category.hidden {
+            display: none;
+        }
+
+        .operator-category-header {
+            background: #3498db;
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .operator-category-header:hover {
+            background: #2980b9;
+        }
+
+        .operator-category-header h4 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .operator-category-number {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .operator-category-toggle {
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
+
+        .operator-category-toggle.expanded {
+            transform: rotate(180deg);
+        }
+
+        .operator-category-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .operator-category-content.expanded {
+            max-height: 500px;
+            padding: 20px;
+        }
+
+        .operator-description {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .operator-definition {
+            color: #6c757d;
+            margin-bottom: 10px;
+            font-size: 13px;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        .operator-list {
+            background: white;
+            border-radius: 4px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .operator-list h5 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .operators-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .operator-tag {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+            border: 1px solid #bdc3c7;
+        }
+
+        .operator-tag.highlight {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        /* Clickable category styles */
+        .clickable-category {
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .clickable-category:hover {
+            color: #2980b9;
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        /* Category popup tooltip */
+        .category-popup {
+            position: absolute;
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            max-width: 500px;
+            min-width: 300px;
+            padding: 0;
+            display: none;
+        }
+
+        .category-popup-header {
+            background: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px 6px 0 0;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-popup-close {
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .category-popup-content {
+            padding: 15px;
+        }
+
+        .category-popup-description {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .category-popup-operators {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .category-popup-operators h5 {
+            margin: 0 0 8px 0;
+            color: #2c3e50;
+            font-size: 13px;
+        }
+
+        .popup-operators-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .popup-operator-tag {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-family: monospace;
+            border: 1px solid #bdc3c7;
+        }
+
+        .readonly-display {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f8f9fa;
+            font-size: 14px;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="feature-engineering-container">
+        <a href="{{ url_for('index') }}" class="back-button">← Back to Main</a>
+        
+        <div class="header-section">
+            <h1>DataField Guide</h1>
+            <p>Get AI-powered recommendations for multi-step DataField Exploration</p>
+        </div>
+
+        <!-- API Configuration Section -->
+        <div class="config-section" id="apiConfigSection">
+            <h3>API Configuration</h3>
+            <div class="form-group">
+                <label for="modelProvider">AI Model Provider:</label>
+                <select id="modelProvider" class="form-input">
+                    <option value="deepseek">Deepseek</option>
+                    <option value="kimi">Kimi</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="apiKey">API Key:</label>
+                <input type="password" id="apiKey" class="form-input" placeholder="Enter your API key">
+            </div>
+            <div class="form-group">
+                <label for="modelName">Model Name:</label>
+                <input type="text" id="modelName" class="form-input" placeholder="e.g., deepseek-chat, kimi-k2-0711-preview">
+                <small style="color: #7f8c8d; font-size: 12px;">Enter the specific model name for your chosen provider</small>
+            </div>
+            <button id="saveApiKey" class="btn">Test & Save Configuration</button>
+        </div>
+
+        <!-- Show API Config Button (hidden by default) -->
+        <div class="config-section" id="showApiConfigSection" style="display: none;">
+            <h3>API Configuration</h3>
+            <p style="color: #27ae60; margin-bottom: 15px;">✅ API configuration saved successfully</p>
+            <button id="showApiConfig" class="btn btn-secondary">Show API Configuration</button>
+        </div>
+
+        <!-- Pipeline Status Section -->
+        <div class="pipeline-status" id="pipelineStatus" style="display: none;">
+            <h4>Current Pipeline Status</h4>
+            <div id="pipelineSteps">
+                <!-- Pipeline steps will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Initial Setup Section -->
+        <div class="config-section" id="initialSetup">
+            <h3>Start New Feature Engineering Pipeline</h3>
+            <div class="template-actions">
+                <button id="loadQuestionTemplate" class="btn btn-secondary">Load Question Template</button>
+                <button id="editSystemPrompt" class="btn btn-secondary">Edit System Prompt</button>
+                <button id="startPipeline" class="btn btn-success">Get AI Recommendations</button>
+            </div>
+            <div class="form-group">
+                <label for="questionTemplate">Question Template:</label>
+                <textarea id="questionTemplate" class="form-input" rows="6" placeholder="Click 'Load Question Template' to load the template"></textarea>
+            </div>
+        </div>
+
+        <!-- Options Cards Section -->
+        <div class="options-section" id="optionsSection" style="display: none;">
+            <div class="options-header">
+                <h3>AI Recommendations</h3>
+                <div class="quick-actions">
+                    <button id="clearOptions" class="btn btn-secondary">Clear & Start Over</button>
+                    <button id="exportPipeline" class="btn">Export Pipeline</button>
+                </div>
+            </div>
+            <div class="options-container" id="optionsContainer">
+                <!-- Option cards will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- Modal Overlay for Editing -->
+        <div class="modal-overlay" id="modalOverlay"></div>
+
+        <!-- Category Popup -->
+        <div class="category-popup" id="categoryPopup">
+            <div class="category-popup-header">
+                <span id="categoryPopupTitle"></span>
+                <span class="category-popup-close" onclick="hideCategoryPopup()">&times;</span>
+            </div>
+            <div class="category-popup-content">
+                <div class="category-popup-description" id="categoryPopupDescription"></div>
+                <div class="category-popup-operators">
+                    <h5 id="categoryPopupOperatorsTitle"></h5>
+                    <div class="popup-operators-grid" id="categoryPopupOperators"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Prompt Edit Modal -->
+        <div class="modal-overlay" id="systemPromptModal" style="display: none;">
+            <div class="modal-content" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 900px; max-height: 80vh; background: white; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 1001;">
+                <div class="modal-header" style="background: #3498db; color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                    <h3>Edit System Prompt</h3>
+                    <span class="close" onclick="closeSystemPromptModal()" style="cursor: pointer; font-size: 24px;">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 20px; max-height: 60vh; overflow-y: auto;">
+                    <div class="form-group">
+                        <label for="systemPromptTextarea">System Prompt:</label>
+                        <textarea id="systemPromptTextarea" class="form-input" rows="20" placeholder="Enter your custom system prompt here..."></textarea>
+                    </div>
+                    <div class="prompt-actions" style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button id="loadDefaultPrompt" class="btn btn-outline">Load Default Prompt</button>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 15px 20px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button onclick="closeSystemPromptModal()" class="btn btn-outline">Cancel</button>
+                    <button onclick="saveSystemPrompt()" class="btn btn-primary">Save & Apply</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operator Suggestions Modal -->
+        <div class="modal-overlay" id="operatorSuggestionsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001;">
+            <div class="modal-content" style="position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%); width: 98%; max-width: 1600px; max-height: 95vh; background: white; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column;">
+                <div class="modal-header" style="background: #9b59b6; color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                    <h3>🎯 Operator Suggestions for Current Step</h3>
+                    <span class="close" onclick="closeOperatorSuggestionsModal()" style="cursor: pointer; font-size: 24px;">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 20px; flex: 1; overflow-y: auto; min-height: 0;">
+                    <!-- Target Section -->
+                    <div class="target-section" style="background: #f8f9fa; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <h4 style="margin: 0; color: #2c3e50; font-size: 14px;">Research Target:</h4>
+                            <button id="modalEditTarget" class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;">Edit Target</button>
+                        </div>
+                        
+                        <!-- Target Display (read-only) -->
+                        <div class="target-display" id="modalTargetDisplay" style="background: white; border: 1px solid #e9ecef; border-radius: 4px; padding: 6px; min-height: 30px; max-height: 40px; overflow-y: auto;">
+                            <div class="target-text" id="modalTargetText" style="line-height: 1.3; word-wrap: break-word; font-size: 12px;">No target set</div>
+                        </div>
+                        
+                        <!-- Target Input (editable) -->
+                        <div id="modalTargetInputGroup" style="display: none;">
+                            <textarea id="modalTargetInput" class="form-input" rows="2" placeholder="Describe your research target..." style="min-height: 40px; max-height: 60px; resize: vertical; font-size: 12px;"></textarea>
+                            <div style="margin-top: 5px;">
+                                <button id="modalSaveTarget" class="btn btn-success" style="padding: 3px 8px; font-size: 11px;">Save Target</button>
+                                <button id="modalCancelTarget" class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px; margin-left: 5px;">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BRAIN Connection Notice -->
+                    <div id="modalBrainNotice" style="margin-bottom: 8px; padding: 6px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; display: none;">
+                        <div style="color: #856404; font-size: 12px;">
+                            <strong>💡 Tip:</strong> Connect to WorldQuant BRAIN to get access to the full operator library (400+ operators). 
+                            <button onclick="openBrainLoginModal()" style="background: #3498db; color: white; border: none; padding: 3px 8px; border-radius: 3px; margin-left: 8px; cursor: pointer; font-size: 11px;">Connect to BRAIN</button>
+                        </div>
+                    </div>
+
+                    <!-- Expression Section -->
+                    <div class="expression-section" style="background: #f8f9fa; padding: 8px; border-radius: 8px; margin-bottom: 8px;">
+                        <h4 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 14px;">Current Expression for Seeking Advice:</h4>
+                        <textarea id="modalCurrentExpression" class="form-input" rows="2" placeholder="Enter your current expression for this step... (e.g., ts_mean(close, 20) or rank(volume))" style="min-height: 30px; max-height: 40px; resize: vertical; font-size: 12px;"></textarea>
+                        <div style="margin-top: 5px;">
+                            <button id="modalStartEvaluation" class="btn btn-warning" style="padding: 5px 10px; font-size: 12px;">Get Operator Suggestions</button>
+                            <button id="modalClearExpression" class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">Clear Expression</button>
+                        </div>
+                    </div>
+
+                    <!-- Evaluation Results Section -->
+                    <div class="evaluation-section" id="modalEvaluationSection" style="display: none;">
+                        <h4 style="margin: 0 0 10px 0; color: #2c3e50;">Operator Suggestions:</h4>
+                        
+                        <!-- Filter Controls -->
+                        <div class="filter-controls" style="display: flex; gap: 10px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; padding: 6px; background: white; border-radius: 4px; border: 1px solid #e9ecef;">
+                            <label style="display: flex; align-items: center; gap: 5px; font-weight: normal; min-width: 120px; font-size: 12px;">
+                                <strong>Min Score:</strong>
+                                <input type="range" id="modalMinScoreFilter" min="0" max="10" value="7" style="width: 80px;">
+                                <span id="modalMinScoreValue" style="font-weight: bold; color: #3498db;">7</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px; font-weight: normal; min-width: 100px; font-size: 12px;">
+                                <input type="checkbox" id="modalShowHighScores" checked> <strong>High (8-10)</strong>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px; font-weight: normal; min-width: 100px; font-size: 12px;">
+                                <input type="checkbox" id="modalShowMediumScores" checked> <strong>Medium (4-7)</strong>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px; font-weight: normal; min-width: 100px; font-size: 12px;">
+                                <input type="checkbox" id="modalShowLowScores"> <strong>Low (0-3)</strong>
+                            </label>
+                        </div>
+
+                        <!-- Summary Stats -->
+                        <div class="summary-stats" id="modalSummaryStats" style="display: none; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 8px;">
+                            <div class="stat-card stat-high" style="background: white; padding: 6px; border-radius: 4px; text-align: center;">
+                                <div class="stat-number" id="modalHighScoreCount" style="font-size: 14px; font-weight: bold; color: #27ae60;">0</div>
+                                <div class="stat-label" style="font-size: 11px; color: #7f8c8d;">High (8-10)</div>
+                            </div>
+                            <div class="stat-card stat-medium" style="background: white; padding: 6px; border-radius: 4px; text-align: center;">
+                                <div class="stat-number" id="modalMediumScoreCount" style="font-size: 14px; font-weight: bold; color: #f39c12;">0</div>
+                                <div class="stat-label" style="font-size: 11px; color: #7f8c8d;">Medium (4-7)</div>
+                            </div>
+                            <div class="stat-card stat-low" style="background: white; padding: 6px; border-radius: 4px; text-align: center;">
+                                <div class="stat-number" id="modalLowScoreCount" style="font-size: 14px; font-weight: bold; color: #e74c3c;">0</div>
+                                <div class="stat-label" style="font-size: 11px; color: #7f8c8d;">Low (0-3)</div>
+                            </div>
+                        </div>
+
+                        <!-- Results Table -->
+                        <div class="evaluation-table-container" style="overflow-x: auto; max-height: 600px; overflow-y: auto;">
+                            <table class="evaluation-table" id="modalEvaluationTable" style="width: 100%; border-collapse: collapse; font-size: 13px; border: 1px solid #dee2e6;">
+                                <thead>
+                                    <tr>
+                                        <th style="background: #f8f9fa; padding: 8px; text-align: left; border: 1px solid #dee2e6; border-bottom: 2px solid #dee2e6; position: sticky; top: 0; z-index: 10; width: 370px;">Operator</th>
+                                        <th style="background: #f8f9fa; padding: 8px; text-align: left; border: 1px solid #dee2e6; border-bottom: 2px solid #dee2e6; position: sticky; top: 0; z-index: 10; min-width: 400px;">Reason</th>
+                                        <th style="background: #f8f9fa; padding: 8px; text-align: center; border: 1px solid #dee2e6; border-bottom: 2px solid #dee2e6; position: sticky; top: 0; z-index: 10; width: 60px;">Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalEvaluationTableBody">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; color: #7f8c8d; font-style: italic; padding: 20px;">
+                                            No suggestions yet. Enter your expression and click "Get Operator Suggestions".
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Progress Section -->
+                    <div class="progress-section" id="modalProgressSection" style="display: none; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px;">
+                        <div class="progress-header" style="background: #27ae60; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0;">
+                            <h4 style="margin: 0; font-size: 14px;">🔄 Evaluating Operators...</h4>
+                        </div>
+                        <div class="progress-content" style="padding: 15px;">
+                            <div class="progress-bar" style="width: 100%; height: 15px; background-color: #e9ecef; border-radius: 8px; overflow: hidden; margin-bottom: 8px;">
+                                <div class="progress-fill" id="modalProgressFill" style="height: 100%; background: linear-gradient(90deg, #27ae60, #2ecc71); transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold; width: 0%;">0%</div>
+                            </div>
+                            <div class="progress-stats" style="display: flex; justify-content: space-between; font-size: 12px; color: #6c757d;">
+                                <span id="modalProgressText">Evaluating operators...</span>
+                                <span id="modalProgressCount">0 / 0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 15px 20px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                    <div>
+                        <button id="modalExportResults" class="btn btn-secondary" style="display: none;">Export Results</button>
+                    </div>
+                    <div>
+                        <button onclick="closeOperatorSuggestionsModal()" class="btn btn-outline">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Export Section -->
+        <div class="export-section">
+            <h3>Available Feature Engineering Categories</h3>
+            <p>The AI assistant can recommend from these 15 categories:</p>
+            <div class="category-list">
+                <div class="category-item">Basic Arithmetic & Mathematical Operations</div>
+                <div class="category-item">Logical & Conditional Operations</div>
+                <div class="category-item">Time Series: Change Detection & Value Comparison</div>
+                <div class="category-item">Time Series: Statistical Feature Engineering</div>
+                <div class="category-item">Time Series: Ranking, Scaling, and Normalization</div>
+                <div class="category-item">Time Series: Decay, Smoothing, and Turnover Control</div>
+                <div class="category-item">Time Series: Extremes & Position Identification</div>
+                <div class="category-item">Cross-Sectional: Ranking, Scaling, and Normalization</div>
+                <div class="category-item">Cross-Sectional: Regression & Neutralization</div>
+                <div class="category-item">Cross-Sectional: Distributional Transformation & Truncation</div>
+                <div class="category-item">Transformational & Filtering Operations</div>
+                <div class="category-item">Group Aggregation & Statistical Summary</div>
+                <div class="category-item">Group Ranking, Scaling, and Normalization</div>
+                <div class="category-item">Group Regression & Neutralization</div>
+                <div class="category-item">Group Imputation & Backfilling</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BRAIN Login Modal -->
+    <div id="brainLoginModal" class="modal" style="display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div class="modal-content" style="background-color: white; margin: 5% auto; padding: 0; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <div class="modal-header" style="background: #3498db; color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                <h3>Connect to WorldQuant BRAIN</h3>
+                <span class="close" onclick="closeBrainLoginModal()" style="cursor: pointer; font-size: 24px;">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <form id="brainLoginForm" onsubmit="event.preventDefault(); authenticateBrain();">
+                    <div class="form-group">
+                        <label for="brainUsername">Username:</label>
+                        <input type="email" id="brainUsername" class="form-input" placeholder="your.email@domain.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="brainPassword">Password:</label>
+                        <input type="password" id="brainPassword" class="form-input" placeholder="Your password" required>
+                    </div>
+                    <div id="brainLoginStatus" class="login-status"></div>
+                    <div id="loginSpinner" class="login-spinner" style="display: none;">
+                        <div class="spinner" style="width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block;"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="padding: 15px 20px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeBrainLoginModal()" class="btn btn-outline" id="cancelBtn">Cancel</button>
+                <button onclick="authenticateBrain()" class="btn btn-primary" id="loginBtn">Connect</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='brain.js') }}"></script>
+    <script src="{{ url_for('static', filename='feature_engineering.js') }}"></script>
+</body>
+</html> 

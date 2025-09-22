@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRAIN Alpha Simulator - User Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .simulator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .simulator-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group input[type="number"] {
+            width: 120px;
+        }
+        
+        .form-group input[type="file"] {
+            padding: 4px;
+        }
+        
+        .form-group textarea {
+            height: 60px;
+            resize: vertical;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .log-viewer {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', 'SimSun', 'Microsoft YaHei', monospace;
+            font-size: 12px;
+            height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-top: 10px;
+            unicode-bidi: embed;
+            word-break: break-all;
+        }
+        
+        .status-indicator {
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .status-idle {
+            background: #e9ecef;
+            color: #495057;
+        }
+        
+        .status-running {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-success {
+            background: #d1edff;
+            color: #0c5460;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .parameter-help {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-run {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .btn-run:hover {
+            background: #218838;
+        }
+        
+        .btn-run:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .password-input {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .file-info {
+            margin-top: 8px;
+            padding: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 10px 0;
+            color: #856404;
+        }
+        
+        .info-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 10px 0;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="simulator-container">
+        <a href="/" class="back-link">← Back to Main Page</a>
+        
+        <header>
+            <h1>🚀 BRAIN Alpha Simulator</h1>
+            <p class="subtitle">User-friendly interface for running alpha simulations</p>
+            
+            <div class="status-indicator" id="simulatorStatus">
+                Ready to configure simulation parameters
+            </div>
+        </header>
+
+        <div class="simulator-grid">
+            <!-- Configuration Panel -->
+            <div class="simulator-panel">
+                <h3>📋 Simulation Configuration</h3>
+                
+                <form id="simulatorForm">
+                    <!-- JSON File Selection -->
+                    <div class="form-group">
+                        <label for="jsonFile">📁 Expressions JSON File</label>
+                        <input type="file" id="jsonFile" accept=".json" required>
+                        <div class="parameter-help">Select expressions_with_settings.json file</div>
+                        <div id="jsonFileInfo" class="file-info" style="display: none;"></div>
+                    </div>
+                    
+                    <!-- Authentication -->
+                    <div class="form-group">
+                        <label for="username">👤 BRAIN Username</label>
+                        <input type="text" id="username" required placeholder="your.email@domain.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">🔒 BRAIN Password</label>
+                        <div class="password-input">
+                            <input type="password" id="password" required placeholder="Your password">
+                            <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Simulation Parameters -->
+                    <div class="form-group">
+                        <label for="startPosition">🎯 Starting Position</label>
+                        <input type="number" id="startPosition" min="0" value="0" required>
+                        <div class="parameter-help">Start from expression N (0-based index)</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="concurrentCount">⚡ Concurrent Simulations</label>
+                        <input type="number" id="concurrentCount" min="1" value="3" required>
+                        <div class="parameter-help">Number of parallel simulations</div>
+                    </div>
+                    
+                    <!-- Advanced Options -->
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="randomShuffle">
+                            <label for="randomShuffle">🔀 Random Shuffle</label>
+                        </div>
+                        <div class="parameter-help">Randomly shuffle expressions order</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="useMultiSim" onchange="toggleMultiSimOptions()">
+                            <label for="useMultiSim">🎛️ Multi-Simulation Mode</label>
+                        </div>
+                        <div class="parameter-help">Combine multiple alphas in one simulation slot</div>
+                    </div>
+                    
+                    <div class="form-group" id="multiSimOptions" style="display: none;">
+                        <label for="alphaCountPerSlot">📊 Alphas per Slot</label>
+                        <input type="number" id="alphaCountPerSlot" min="2" max="10" value="3">
+                        <div class="parameter-help">Number of alphas per multi-simulation slot (2-10)</div>
+                    </div>
+                    
+                    <div class="warning-box" id="overwriteWarning" style="display: none;">
+                        ⚠️ Warning: Original JSON file will be overwritten if starting position > 0 or random shuffle is enabled!
+                    </div>
+                </form>
+                
+                <div class="action-buttons">
+                    <button class="btn-run" id="runSimulator" onclick="runSimulator()">
+                        🚀 Start Simulation
+                    </button>
+                    <button class="btn btn-outline" onclick="testConnection()" id="testBtn">
+                        🔗 Test Connection
+                    </button>
+                    <button class="btn btn-outline" onclick="stopSimulation()" id="stopBtn" style="display: none;">
+                        ⏹️ Stop
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Log Viewer Panel -->
+            <div class="simulator-panel">
+                <h3>📊 Simulation Logs & Status</h3>
+                
+                <div class="info-box" id="currentLogFile">
+                    No log file selected. Latest log will be auto-monitored when simulation starts.
+                </div>
+                
+                <div class="form-group">
+                    <label for="logSelector">📁 Select Log File</label>
+                    <select id="logSelector" onchange="loadSelectedLog()">
+                        <option value="">Select a log file...</option>
+                    </select>
+                    <button class="btn btn-small btn-outline" onclick="refreshLogFiles()">🔄 Refresh</button>
+                </div>
+                
+                <div class="log-viewer" id="logViewer">
+                    Welcome to BRAIN Alpha Simulator!
+                    
+                    This interface will show:
+                    - Real-time simulation progress
+                    - Authentication status
+                    - Alpha generation results
+                    - Error messages and warnings
+                    
+                    Configure your parameters and click "Start Simulation" to begin.
+                </div>
+                
+                <div id="simulationProgress" style="margin-top: 15px; display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Progress:</span>
+                        <span id="progressText">0/0</span>
+                    </div>
+                    <div style="background: #e9ecef; height: 8px; border-radius: 4px; margin-top: 5px;">
+                        <div id="progressBar" style="background: #28a745; height: 100%; border-radius: 4px; width: 0%; transition: width 0.3s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="simulator-panel" id="resultsPanel" style="margin-top: 20px; display: none;">
+            <h3>✅ Simulation Request Sent Successfully</h3>
+            <div id="simulationResults"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='simulator.js') }}"></script>
+</body>
+</html> 

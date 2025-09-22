@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRAIN Expression Template Decoder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="header-left">
+                    <button onclick="openSubmitter()" class="btn btn-submitter">📤 Open Submitter</button>
+                    <button onclick="openHKSimulator()" class="btn btn-submitter" style="margin-top: 10px; display: block;">🚀 Open Simulator_hk</button>
+                </div>
+                <div class="header-center">
+                    <h1>BRAIN Expression Template Decoder</h1>
+                    <p class="subtitle">Specialized template decoder with grammar checking for expression-like language</p>
+                </div>
+            </div>
+            <div class="header-buttons">
+                <div class="header-buttons-row">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button id="connectToBrain" class="btn btn-brain">Connect to BRAIN</button>
+                        <button onclick="runSimulator()" class="btn btn-primary">🚀 Go to Simulator</button>
+                    </div>
+                    <a href="{{ url_for('inspiration_house.inspiration_house') }}" class="btn btn-primary">Inspiration House</a>
+                    <a href="{{ url_for('paper_analysis.paper_analysis') }}" class="btn btn-primary">Paper Analysis</a>
+                    <a href="{{ url_for('feature_engineering.feature_engineering') }}" class="btn btn-primary">DataField Guide</a>
+
+                    
+                </div>
+            </div>
+        </header>
+
+        <!-- Unified Templates Section -->
+        <div class="templates-section">
+            <div class="templates-header">
+                <h3>Expression Templates</h3>
+                <div class="template-actions">
+                    <button class="btn btn-small btn-primary" id="toggleTemplateView" onclick="toggleTemplateView()">
+                        <span id="toggleTemplateViewText">Show User's Only</span>
+                    </button>
+                    <button class="btn btn-small btn-outline" onclick="exportCustomTemplates()" title="Export all custom templates">
+                        <span style="margin-right: 5px;">📤</span>Export User Templates
+                    </button>
+                    <button class="btn btn-small btn-outline" onclick="document.getElementById('importTemplatesFile').click()" title="Import templates from file">
+                        <span style="margin-right: 5px;">📥</span>Import User Templates
+                    </button>
+                    <input type="file" id="importTemplatesFile" accept=".json" style="display: none;" onchange="importCustomTemplates(event)">
+                </div>
+            </div>
+            <div class="all-template-buttons">
+                <!-- Example Templates -->
+                <div id="exampleTemplateButtons">
+                    <button class="btn btn-template btn-template-example" data-template-type="example" onclick="loadTemplateExample(2)">Vector Data Processing</button>
+                    <button class="btn btn-template btn-template-example" data-template-type="example" onclick="loadTemplateExample(1)">Nested Feature Digger</button>
+                    <button class="btn btn-template btn-template-example" data-template-type="example" onclick="loadTemplateExample(3)">Double Neutralization</button>
+                    <button class="btn btn-template btn-template-example" data-template-type="example" onclick="loadTemplateExample(4)">Group Mean Residual_Matrix Data</button>
+                    <button class="btn btn-template btn-template-example" data-template-type="example" onclick="loadTemplateExample(5)">Group Mean Residual_Vector Data</button>
+                    <button class="btn btn-template btn-template-example" data-template-type="example" onclick="loadTemplateExample(6)">TVR Delta Limit</button> 
+                    <button class="btn btn-template btn-template-example" data-template-type="example" onclick="loadTemplateExample(7)">TVR Hump</button>
+                </div>
+                
+                <!-- Custom Templates will be loaded here -->
+                <div id="customTemplateButtons">
+                    <!-- Custom templates will be dynamically inserted here -->
+                </div>
+            </div>
+            <div class="custom-template-info" id="noCustomTemplates" style="display: none;">
+                <p style="margin-top: 10px; color: #6c757d; font-style: italic;">No custom templates saved yet. Create your expression and click "Save Current" to save it as a template.</p>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="page-navigation">
+            <button class="nav-tab active" data-page="editor">
+                <span class="nav-icon">✏️</span>
+                <span class="nav-text">Expression Editor</span>
+            </button>
+            <button class="nav-tab" data-page="decode">
+                <span class="nav-icon">🔄</span>
+                <span class="nav-text">Decode Templates</span>
+            </button>
+            <button class="nav-tab" data-page="results" id="resultsTab" style="display: none;">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Results</span>
+                <span class="nav-badge" id="resultsBadge">0</span>
+            </button>
+        </nav>
+
+        <!-- Page Content Container -->
+        <div class="page-container">
+            <!-- Editor Page -->
+            <div class="page-content active" id="editorPage">
+                <div class="main-content">
+                    <div class="editor-section">
+                        <div class="editor-header">
+                            <h2>Expression Editor</h2>
+                            <div class="editor-actions">
+                                <button id="clearEditor" class="btn btn-outline">Clear</button>
+                                <button class="btn btn-secondary" onclick="saveCurrentTemplate()">
+                                    <span style="margin-right: 5px;">💾</span>Save Current Template
+                                </button>
+                                <button class="btn btn-outline" onclick="overwriteExistingTemplate()">
+                                    <span style="margin-right: 5px;">🔄</span>Overwrite Existing
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="editor-wrapper">
+                            <div class="line-numbers" id="lineNumbers"></div>
+                            <div class="editor-container">
+                                <div id="highlightedText" class="highlighted-text"></div>
+                                <textarea id="expressionEditor" class="expression-editor" placeholder="Enter your expression here...">
+<time_series_operator/>(sentiment_difference, <days/>)</textarea>
+                            </div>
+                        </div>
+                        
+                        <div id="grammarErrors" class="grammar-errors"></div>
+                    </div>
+
+                    <div class="info-panel">
+                        <h3>Detected Templates</h3>
+                        <div id="templateList" class="template-list"></div>
+                        
+                        <h3>Grammar Rules</h3>
+                        <ul class="grammar-rules">
+                            <li><code>/* */</code> - Block comments for multiple lines</li>
+                            <li><code>;</code> - Statement separator (not needed for last line)</li>
+                            <li>Last statement is the Alpha expression for BRAIN simulator</li>
+                            <li>Alpha expression cannot be assigned to a variable</li>
+                            <li>No classes, objects, pointers, or functions allowed</li>
+                        </ul>
+                        
+                        <div class="next-step-hint">
+                            <button class="btn btn-primary" onclick="navigateToPage('decode')">
+                                Next: Decode Templates →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decode Page -->
+            <div class="page-content" id="decodePage">
+                <div class="decode-content">
+                    <h2>Template Decoding Options</h2>
+                    <div class="template-status" id="templateStatus">
+                        <!-- Template configuration status will be shown here -->
+                    </div>
+                    
+                    <div class="decode-buttons">
+                        <button id="decodeTemplates" class="btn btn-primary btn-large">full_iteration</button>
+                        <div class="random-iteration-container">
+                            <button id="randomIterationBtn" class="btn btn-primary btn-large">random_iteration</button>
+                            <input type="number" id="randomCount" class="random-count-input" placeholder="Count" min="1" value="10" title="Number of random expressions to generate">
+                        </div>
+                    </div>
+                    
+                    <div class="decode-info">
+                        <p><strong>full_iteration:</strong> Generate all possible combinations of configured templates</p>
+                        <p><strong>random_iteration:</strong> Generate random samples from the possible combinations</p>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-outline" onclick="navigateToPage('editor')">
+                            ← Back to Editor
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Page -->
+            <div class="page-content" id="resultsPage">
+                <div class="results-content">
+                    <h2>Decoded Expressions</h2>
+                    <div id="resultsList" class="results-list"></div>
+                    <div class="results-actions">
+                        <button id="nextMoveBtn" class="btn btn-secondary btn-small">Append Expression with Settings</button>
+                        <button id="downloadResults" class="btn btn-primary btn-small" title="Download all generated expressions">Download All Expression in txt</button>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-outline" onclick="navigateToPage('decode')">
+                            ← Back to Decode
+                        </button>
+                        <button class="btn btn-outline" onclick="navigateToPage('editor')">
+                            ← Back to Editor
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Variable Input Modal -->
+    <div id="templateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Enter Variables</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="modalDescription">Enter a comma-separated list of variables:</p>
+                <textarea id="variableInput" class="variable-input" placeholder="variable1, variable2, variable3"></textarea>
+                <div id="brainChooseSection" class="brain-choose-section" style="display: none;">
+                    <button id="chooseBrainBtn" class="btn btn-secondary btn-small">Choose from BRAIN</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" class="btn btn-outline">Cancel</button>
+                <button onclick="applyTemplate()" class="btn btn-primary">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Configuration Info Modal -->
+    <div id="configInfoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="configInfoTitle">Template Configuration</h3>
+                <span class="close" onclick="closeConfigInfoModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="configInfoContent" class="config-info-content">
+                    <!-- Configuration details will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeConfigInfoModal()" class="btn btn-primary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BRAIN Login Modal -->
+    <div id="brainLoginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Connect to WorldQuant BRAIN</h3>
+                <span class="close" onclick="closeBrainLoginModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="brainLoginForm" onsubmit="event.preventDefault(); authenticateBrain();">
+                    <div class="form-group">
+                        <label for="brainUsername">Username:</label>
+                        <input type="email" id="brainUsername" class="form-input" placeholder="your.email@domain.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="brainPassword">Password:</label>
+                        <input type="password" id="brainPassword" class="form-input" placeholder="Your password" required>
+                    </div>
+                    <div id="brainLoginStatus" class="login-status"></div>
+                    <div id="loginSpinner" class="login-spinner" style="display: none;">
+                        <div class="spinner"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeBrainLoginModal()" class="btn btn-outline" id="cancelBtn">Cancel</button>
+                <button onclick="authenticateBrain()" class="btn btn-primary" id="loginBtn">Connect</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BRAIN Operators Selection Modal -->
+    <div id="brainOperatorsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Choose Operators from BRAIN</h3>
+                <span class="close" onclick="closeBrainOperatorsModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-section">
+                    <input type="text" id="operatorSearch" class="form-input" placeholder="Search operators...">
+                </div>
+                <div class="category-filter">
+                    <label>Filter by category:</label>
+                    <select id="categoryFilter" class="form-input">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                <div class="operator-actions">
+                    <button id="selectAllFilteredOperators" class="btn btn-small btn-secondary">Select All Filtered</button>
+                    <button id="clearAllOperators" class="btn btn-small btn-outline">Clear All</button>
+                </div>
+                <div id="operatorsList" class="operators-list">
+                    <!-- Operators will be populated here -->
+                </div>
+                <div class="selected-operators">
+                    <strong>Selected operators:</strong>
+                    <div id="selectedOperators" class="selected-items"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeBrainOperatorsModal()" class="btn btn-outline">Cancel</button>
+                <button onclick="applySelectedOperators()" class="btn btn-primary">Apply Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BRAIN Data Fields Selection Modal -->
+    <div id="brainDataFieldsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Get Data Fields via BRAINAPI</h3>
+                <span class="close" onclick="closeBrainDataFieldsModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="data-fields-params">
+                    <div class="params-row">
+                        <div class="param-group">
+                            <label for="regionInput">Region:</label>
+                            <input type="text" id="regionInput" class="form-input" placeholder="e.g., USA" value="USA">
+                        </div>
+                        <div class="param-group">
+                            <label for="delayInput">Delay:</label>
+                            <input type="text" id="delayInput" class="form-input" placeholder="e.g., 1" value="1">
+                        </div>
+                        <div class="param-group">
+                            <label for="universeInput">Universe:</label>
+                            <input type="text" id="universeInput" class="form-input" placeholder="e.g., TOP3000" value="TOP3000">
+                        </div>
+                        <div class="param-group">
+                            <label for="datasetInput">Dataset ID:</label>
+                            <input type="text" id="datasetInput" class="form-input" placeholder="e.g., fundamental6" value="fundamental6">
+                        </div>
+                        <div class="param-group">
+                            <button id="loadDataFieldsBtn" class="btn btn-secondary">Load Data Fields</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="dataFieldsLoading" class="loading-message" style="display: none;">
+                    Loading data fields...
+                </div>
+                <div id="dataFieldsContent" class="data-fields-content" style="display: none;">
+                    <div class="data-fields-controls">
+                        <div class="filter-label">
+                            <span>Sample filtering👉</span>
+                        </div>
+                        <div class="filter-options">
+                            <label>
+                                <input type="checkbox" id="filterHighCoverage"> High Coverage (>90%)
+                            </label>
+                            <label>
+                                <input type="checkbox" id="filterPopular"> Popular (>1000 users)
+                            </label>
+                            <label>
+                                <input type="checkbox" id="filterMatrixOnly"> Matrix Type Only
+                            </label>
+                        </div>
+                        <div class="filter-actions">
+                            <button id="selectAllFiltered" class="btn btn-small btn-secondary">Select All Filtered</button>
+                            <button id="clearAllSelected" class="btn btn-small btn-outline">Clear All</button>
+                        </div>
+                    </div>
+                    <div class="data-fields-stats">
+                        <span id="dataFieldsCount">0 fields loaded</span> | 
+                        <span id="filteredCount">0 filtered</span> | 
+                        <span id="selectedCount">0 selected</span>
+                    </div>
+                    <div class="data-fields-table-container">
+                        <table class="data-fields-table">
+                            <thead>
+                                <tr class="header-row">
+                                    <th style="width: 40px;">
+                                        <input type="checkbox" id="selectAllCheckbox" title="Select/Deselect All">
+                                    </th>
+                                    <th style="width: 200px; min-width: 150px;">
+                                        Field ID
+                                        <button class="sort-btn" data-column="id" data-order="asc">↕</button>
+                                    </th>
+                                    <th style="min-width: 300px;">
+                                        Description
+                                        <button class="sort-btn" data-column="description" data-order="asc">↕</button>
+                                    </th>
+                                    <th style="width: 100px;">
+                                        Type
+                                        <button class="sort-btn" data-column="type" data-order="asc">↕</button>
+                                    </th>
+                                    <th style="width: 150px;">
+                                        Coverage
+                                        <button class="sort-btn" data-column="coverage" data-order="asc">↕</button>
+                                    </th>
+                                    <th style="width: 100px;">
+                                        Users
+                                        <button class="sort-btn" data-column="userCount" data-order="asc">↕</button>
+                                    </th>
+                                    <th style="width: 100px;">
+                                        Alphas
+                                        <button class="sort-btn" data-column="alphaCount" data-order="asc">↕</button>
+                                    </th>
+                                </tr>
+                                <tr class="filter-row">
+                                    <th></th>
+                                    <th>
+                                        <input type="text" class="column-filter" data-column="id" placeholder="Filter ID...">
+                                    </th>
+                                    <th>
+                                        <input type="text" class="column-filter" data-column="description" placeholder="Filter description...">
+                                    </th>
+                                    <th>
+                                        <select class="column-filter" data-column="type" id="typeFilter">
+                                            <option value="">All Types</option>
+                                        </select>
+                                    </th>
+                                    <th>
+                                        <div class="range-filter">
+                                            <input type="number" class="column-filter-min" data-column="coverage" placeholder="Min %" min="0" max="100" step="0.1">
+                                            <span>-</span>
+                                            <input type="number" class="column-filter-max" data-column="coverage" placeholder="Max %" min="0" max="100" step="0.1">
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <input type="number" class="column-filter" data-column="userCount" placeholder="Min users" min="0">
+                                    </th>
+                                    <th>
+                                        <input type="number" class="column-filter" data-column="alphaCount" placeholder="Min alphas" min="0">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataFieldsTableBody">
+                                <!-- Data fields will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="selected-data-fields">
+                        <strong>Selected data fields:</strong>
+                        <div id="selectedDataFields" class="selected-items"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeBrainDataFieldsModal()" class="btn btn-outline">Cancel</button>
+                <button onclick="applySelectedDataFields()" class="btn btn-primary">Apply Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal for Next Move -->
+    <div id="settingsModal" class="modal settings-modal">
+        <div class="modal-content settings-modal-content">
+            <div class="modal-header">
+                <h3>Expression Settings Configuration</h3>
+                <span class="close" onclick="closeSettingsModal()">&times;</span>
+            </div>
+            <div class="modal-body settings-modal-body">
+                <div class="settings-info">
+                    <p><strong>Configure settings to append to your decoded expressions</strong></p>
+                    <p class="settings-note">You can enter multiple comma-separated values for any setting to create iterations</p>
+                </div>
+                
+                <div class="settings-container">
+                    <table class="settings-table">
+                        <thead>
+                            <tr>
+                                <th width="20%">Setting Name</th>
+                                <th width="50%">Value(s)</th>
+                                <th width="15%">Type</th>
+                                <th width="15%">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="settingsTableBody">
+                            <tr>
+                                <td>instrumentType</td>
+                                <td><input type="text" class="setting-value-input" data-setting="instrumentType" placeholder="EQUITY" readonly></td>
+                                <td><select class="setting-type-select" data-setting="instrumentType" disabled><option>string</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>region</td>
+                                <td><input type="text" class="setting-value-input" data-setting="region" placeholder="sample:  USA (e.g., USA, EUR, ASI)"></td>
+                                <td><select class="setting-type-select" data-setting="region"><option>string</option><option>number</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>universe</td>
+                                <td><input type="text" class="setting-value-input" data-setting="universe" placeholder="sample:  TOP3000 (e.g., TOP3000, TOP1000, TOP500)"></td>
+                                <td><select class="setting-type-select" data-setting="universe"><option>string</option><option>number</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>delay</td>
+                                <td>
+                                    <select class="setting-value-input" data-setting="delay">
+                                        <option value="1" selected>1</option>
+                                        <option value="0">0</option>
+                                    </select>
+                                </td>
+                                <td><select class="setting-type-select" data-setting="delay"><option>number</option><option>string</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>decay</td>
+                                <td><input type="text" class="setting-value-input" data-setting="decay" placeholder="sample:  20 (e.g., 0, 5, 20, 60)"></td>
+                                <td><select class="setting-type-select" data-setting="decay"><option>number</option><option>string</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>neutralization</td>
+                                <td><input type="text" class="setting-value-input" data-setting="neutralization" placeholder="sample:  SUBINDUSTRY (e.g., NONE, SECTOR, INDUSTRY, SUBINDUSTRY)"></td>
+                                <td><select class="setting-type-select" data-setting="neutralization"><option>string</option><option>number</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>truncation</td>
+                                <td><input type="text" class="setting-value-input" data-setting="truncation" placeholder="sample:  0.08 (e.g., 0.01, 0.05, 0.08, 0.1)"></td>
+                                <td><select class="setting-type-select" data-setting="truncation"><option>number</option><option>string</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>pasteurization</td>
+                                <td>
+                                    <select class="setting-value-input" data-setting="pasteurization">
+                                        <option value="ON" selected>ON</option>
+                                        <option value="OFF">OFF</option>
+                                    </select>
+                                </td>
+                                <td><select class="setting-type-select" data-setting="pasteurization"><option>string</option><option>number</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>testPeriod</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="range" class="setting-value-input test-period-slider" data-setting="testPeriod" 
+                                               min="0" max="60" value="0" step="1" 
+                                               style="flex: 1; min-width: 200px; margin: 0; padding: 0; 
+                                                      -webkit-appearance: none; appearance: none; 
+                                                      background: #ddd; height: 6px; border-radius: 3px; outline: none;">
+                                        <style>
+                                            .test-period-slider::-webkit-slider-thumb {
+                                                -webkit-appearance: none;
+                                                appearance: none;
+                                                width: 18px;
+                                                height: 18px;
+                                                border-radius: 50%;
+                                                background: #2196F3;
+                                                cursor: pointer;
+                                                border: none;
+                                            }
+                                            .test-period-slider::-moz-range-thumb {
+                                                width: 18px;
+                                                height: 18px;
+                                                border-radius: 50%;
+                                                background: #2196F3;
+                                                cursor: pointer;
+                                                border: none;
+                                            }
+                                            .test-period-slider::-webkit-slider-track {
+                                                background: #ddd;
+                                                height: 6px;
+                                                border-radius: 3px;
+                                            }
+                                            .test-period-slider::-moz-range-track {
+                                                background: #ddd;
+                                                height: 6px;
+                                                border-radius: 3px;
+                                                border: none;
+                                            }
+                                        </style>
+                                        <span id="testPeriodValue" style="min-width: 70px; font-family: monospace; font-size: 12px;">P0Y0M</span>
+                                    </div>
+                                </td>
+                                <td><select class="setting-type-select" data-setting="testPeriod"><option>string</option><option>number</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>unitHandling</td>
+                                <td><input type="text" class="setting-value-input" data-setting="unitHandling" placeholder="VERIFY" value="VERIFY" readonly></td>
+                                <td><select class="setting-type-select" data-setting="unitHandling" disabled><option>string</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>nanHandling</td>
+                                <td>
+                                    <select class="setting-value-input" data-setting="nanHandling">
+                                        <option value="OFF" selected>OFF</option>
+                                        <option value="ON">ON</option>
+                                    </select>
+                                </td>
+                                <td><select class="setting-type-select" data-setting="nanHandling"><option>string</option><option>number</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>maxTrade</td>
+                                <td>
+                                    <select class="setting-value-input" data-setting="maxTrade">
+                                        <option value="ON" selected>ON</option>
+                                        <option value="OFF">OFF</option>
+                                    </select>
+                                </td>
+                                <td><select class="setting-type-select" data-setting="maxTrade"><option>string</option><option>number</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>language</td>
+                                <td><input type="text" class="setting-value-input" data-setting="language" placeholder="FASTEXPR" readonly></td>
+                                <td><select class="setting-type-select" data-setting="language" disabled><option>string</option></select></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>visualization</td>
+                                <td>
+                                    <select class="setting-value-input" data-setting="visualization">
+                                        <option value="false" selected>False</option>
+                                        <option value="true">True</option>
+                                    </select>
+                                </td>
+                                <td><select class="setting-type-select" data-setting="visualization"><option>boolean</option><option>string</option><option>number</option></select></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="add-setting-container">
+                        <button id="addSettingBtn" class="btn btn-secondary btn-small">+ Add Custom Setting</button>
+                    </div>
+                </div>
+                
+                <div class="settings-preview">
+                    <div class="preview-header">
+                        <strong>Preview:</strong> 
+                        <span id="totalCombinations">0</span> total combinations will be generated
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeSettingsModal()" class="btn btn-outline">Cancel</button>
+                <button onclick="confirmAndApplySettings()" class="btn btn-primary" id="generateDownloadBtn">
+                    <span class="btn-text">Generate & Download</span>
+                    <div class="btn-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-bar-fill" style="width: 0%;"></div>
+                        </div>
+                        <span class="progress-text">Generating...</span>
+                    </div>
+                </button>
+                <button onclick="generateAndTest()" class="btn btn-primary" style="background-color: #28a745;">Generate & Test</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BRAIN Test Results Modal -->
+    <div id="brainTestResultsModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>BRAIN API Test Results</h3>
+                <span class="close" onclick="closeBrainTestResultsModal()">&times;</span>
+            </div>
+            <div class="modal-body" style="max-height: 600px; overflow-y: auto;">
+                <div id="brainTestProgress" class="test-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div id="progressBarFill" class="progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                    <p id="progressText">Testing expressions...</p>
+                </div>
+                <div id="brainTestResults" class="test-results">
+                    <!-- Test results will be displayed here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeBrainTestResultsModal()" class="btn btn-primary">Close</button>
+                <button onclick="goToSimulator()" class="btn btn-secondary" id="downloadTestResultsBtn" style="display: none;">🚀 Open Simulator_mainland</button>
+                <button onclick="confirmAndDownloadExpressionWithSettings()" class="btn btn-secondary" id="downloadExpressionWithSettingsBtn" style="display: none;">
+                    <span class="btn-text">Download Expression with Settings</span>
+                    <div class="btn-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-bar-fill" style="width: 0%;"></div>
+                        </div>
+                        <span class="progress-text">Generating...</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Template Modal -->
+    <div id="saveTemplateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Save Custom Template</h3>
+                <span class="close" onclick="closeSaveTemplateModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="templateName">Template Name:</label>
+                    <input type="text" id="templateName" class="form-input" placeholder="Enter a name for your template" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="templateDescription">Description (optional):</label>
+                    <textarea id="templateDescription" class="form-input" placeholder="Describe what this template does" rows="3"></textarea>
+                </div>
+                <div class="template-configurations-info" id="templateConfigurationsInfo" style="display: none;">
+                    <div style="background-color: #e8f4fd; border: 1px solid #bee5eb; border-radius: 5px; padding: 12px; margin: 10px 0; font-size: 13px;">
+                        <div style="color: #0c5460; font-weight: 500; margin-bottom: 5px;">
+                            📊 Template Configurations Detected
+                        </div>
+                        <div id="configurationsList" style="color: #0c5460;">
+                            <!-- Template configurations will be listed here -->
+                        </div>
+                        <div style="color: #0c5460; font-size: 12px; margin-top: 5px; font-style: italic;">
+                            ✓ These configurations will be saved with your template
+                        </div>
+                    </div>
+                </div>
+                <div class="template-preview">
+                    <div class="preview-label">Preview:</div>
+                    <pre id="templatePreview" style="margin: 0; white-space: pre-wrap; word-wrap: break-word;"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeSaveTemplateModal()" class="btn btn-outline">Cancel</button>
+                <button onclick="confirmSaveTemplate()" class="btn btn-primary">Save Template</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overwrite Template Modal -->
+    <div id="overwriteTemplateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Overwrite Existing Template</h3>
+                <span class="close" onclick="closeOverwriteTemplateModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="existingTemplateSelect">Select Template to Overwrite:</label>
+                    <select id="existingTemplateSelect" class="form-input">
+                        <option value="">Select a template...</option>
+                    </select>
+                </div>
+                <div id="selectedTemplateInfo" class="form-group" style="display: none;">
+                    <label>Current Description:</label>
+                    <div id="currentTemplateDescription" class="form-input" style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; min-height: 40px; color: #6c757d; font-style: italic;">
+                        <!-- Current template description will be shown here -->
+                    </div>
+                </div>
+                <div class="template-configurations-info" id="overwriteConfigurationsInfo" style="display: none;">
+                    <div style="background-color: #e8f4fd; border: 1px solid #bee5eb; border-radius: 5px; padding: 12px; margin: 10px 0; font-size: 13px;">
+                        <div style="color: #0c5460; font-weight: 500; margin-bottom: 5px;">
+                            📊 Template Configurations Detected
+                        </div>
+                        <div id="overwriteConfigurationsList" style="color: #0c5460;">
+                            <!-- Template configurations will be listed here -->
+                        </div>
+                        <div style="color: #0c5460; font-size: 12px; margin-top: 5px; font-style: italic;">
+                            ✓ These configurations will replace the existing template
+                        </div>
+                    </div>
+                </div>
+                <div class="template-preview">
+                    <div class="preview-label">New Expression Preview:</div>
+                    <pre id="overwriteTemplatePreview" style="margin: 0; white-space: pre-wrap; word-wrap: break-word;"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeOverwriteTemplateModal()" class="btn btn-outline">Cancel</button>
+                <button onclick="confirmOverwriteTemplate()" class="btn btn-primary" id="overwriteConfirmBtn" disabled>Overwrite Template</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='brain.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='decoder.js') }}"></script>
+</body>
+</html> 

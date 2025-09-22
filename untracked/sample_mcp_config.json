@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+      "worldquant-brain-platform": {
+        "command": "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "args": [
+          "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\cnhkmcp\\untracked\\platform_functions.py"
+        ],
+        "description": "WorldQuant BRAIN Platform MCP Server - Comprehensive trading platform integration with simulation management, alpha operations, and authentication. Credentials are stored in user_config.json in the same directory. Provides tools for creating simulations, checking status, managing alphas, and accessing platform features. We also have a forum MCP here, WorldQuant BRAIN Forum MCP Server - Forum interaction and knowledge extraction tools. Provides glossary access, forum post reading, and community features. Credentials are stored in user_config.json in the same directory. Supports headless browser automation for forum scraping and content extraction."
+      }
+    }
+  }

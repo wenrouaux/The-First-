@@ -1,0 +1,129 @@
+name,category,description
+add,Arithmetic,"Add all inputs (at least 2 inputs required). If filter = true, filter all input NaN to 0 before adding"
+exp,Arithmetic,Natural exponential function: e^x
+multiply,Arithmetic,Multiply all inputs. At least 2 inputs are required. Filter sets the NaN values to 1
+sign,Arithmetic,if input = NaN; return NaN
+subtract,Arithmetic,"x-y. If filter = true, filter all input NaN to 0 before subtracting"
+pasteurize,Arithmetic,Set to NaN if x is INF or if the underlying instrument is not in the Alpha universe. This operator may help reduce outliers.
+log,Arithmetic,Natural logarithm. For example: Log(high/low) uses natural logarithm of high/low ratio as stock weights.
+purify,Arithmetic,"Clear infinities (+inf, -inf) by replacing with NaN"
+arc_tan,Arithmetic,This operator does inverse tangent of input
+max,Arithmetic,Maximum value of all inputs. At least 2 inputs are required
+arc_sin,Arithmetic,If -1 <= x <= 1: arcsin(x); else NaN
+to_nan,Arithmetic,Convert value to NaN or NaN to value if reverse=true
+abs,Arithmetic,Absolute value of x
+round_down,Arithmetic,Round input to greatest multiple of f less than input;
+sigmoid,Arithmetic,Returns 1 / (1 + exp(-x))
+divide,Arithmetic,x / y
+min,Arithmetic,Minimum value of all inputs. At least 2 inputs are required
+nan_mask,Arithmetic,"replace input with NAN if input's corresponding mask value or the second input here, is negative"
+arc_cos,Arithmetic,If -1 <= x <= 1: arccos(x); else NaN
+tanh,Arithmetic,Hyperbolic tangent of x
+nan_out,Arithmetic,"If x < lower or x > upper return NaN, else return x. At least one of ""lower"", ""upper"" is required"
+signed_power,Arithmetic,x raised to the power of y such that final result preserves sign of x
+inverse,Arithmetic,1 / x
+round,Arithmetic,Round input to closest integer.
+sqrt,Arithmetic,Square root of x
+s_log_1p,Arithmetic,Confine function to a shorter range using logarithm such that higher input remains higher and negative input remains negative as an output of resulting function and -1 or 1 is an asymptotic value
+reverse,Arithmetic, - x
+replace,Arithmetic,Replace target values in input with destination values
+log_diff,Arithmetic,Returns log(current value of input or x[t] ) - log(previous value of input or x[t-1])
+power,Arithmetic,x ^ y
+densify,Arithmetic,Converts a grouping field of many buckets into lesser number of only available buckets so as to make working with grouping fields computationally efficient
+fraction,Arithmetic,This operator removes the whole number part and returns the remaining fraction part with sign
+floor,Arithmetic,Nearest smaller integer
+ceiling,Arithmetic,Nearest larger integer
+or,Logical,Logical OR operator returns true if either or both inputs are true and returns false otherwise
+and,Logical,"Logical AND operator, returns true if both operands are true and returns false otherwise"
+not,Logical,"Returns the logical negation of x. If x is true (1), it returns false (0), and if input is false (0), it returns true (1)."
+is_not_finite,Logical,If (input NAN or input == INF) return 1 else return 0
+negate,Logical,The result is true if the converted operand is false; the result is false if the converted operand is true
+is_nan,Logical,If (input == NaN) return 1 else return 0
+is_not_nan,Logical,If (input != NaN) return 1 else return 0
+less,Logical,"If input1 < input2 return true, else return false"
+equal,Logical,Returns true if both inputs are same and returns false otherwise
+greater,Logical,Logic comparison operators to compares two inputs
+is_finite,Logical,"If (input NaN or input == INF) return 0, else return 1"
+if_else,Logical,If input1 is true then return input2 else return input3.
+not_equal,Logical,Returns true if both inputs are NOT the same and returns false otherwise
+less_equal,Logical,"Returns true if input1 <= input2, return false otherwise"
+greater_equal,Logical,"Returns true if input1 >= input2, return false otherwise"
+ts_corr,Time Series,Returns correlation of x and y for the past d days
+ts_zscore,Time Series,"Z-score is a numerical measurement that describes a value's relationship to the mean of a group of values. Z-score is measured in terms of standard deviations from the mean: (x - tsmean(x,d)) / tsstddev(x,d). This operator may help reduce outliers and drawdown."
+ts_returns,Time Series,Returns the relative change in the x value
+ts_product,Time Series,Returns product of x for the past d days
+ts_std_dev,Time Series,Returns standard deviation of x for the past d days
+ts_triple_corr,Time Series,"Returns triple correlation of x, y, z for the past d days"
+ts_backfill,Time Series,"Backfill is the process of replacing the NAN or 0 values by a meaningful value (i.e., a first non-NaN value)"
+days_from_last_change,Time Series,Amount of days since last change of x
+last_diff_value,Time Series,Returns last x value not equal to current x value from last d days
+ts_scale,Time Series,"Returns (x - ts_min(x, d)) / (ts_max(x, d) - ts_min(x, d)) + constant. This operator is similar to scale down operator but acts in time series space"
+ts_entropy,Time Series,"For each instrument, we collect values of input in the past d days and calculate the probability distribution then the information entropy via a histogram as a result"
+ts_vector_neut,Time Series,"Returns x- ts_vector_proj(x,y,d)"
+ts_percentage,Time Series,Returns percentile value of x for the past d days
+ts_step,Time Series,Returns days' counter
+ts_sum,Time Series,Sum values of x for the past d days.
+ts_co_kurtosis,Time Series,Returns cokurtosis of y and x for the past d days
+ts_partial_corr,Time Series,"Returns partial correlation of x, y, z for the past d days"
+inst_tvr,Time Series,Total trading value / Total holding value in the past d days
+ts_decay_exp_window,Time Series,Returns exponential decay of x with smoothing factor for the past d days
+ts_av_diff,Time Series,"Returns x - tsmean(x, d), but deals with NaNs carefully. That is NaNs are ignored during mean computation"
+ts_rank_gmean_amean_diff,Time Series,"Returns Geometric Mean of ts_rank(input,d) of all input - Arithmetic Mean of ts_rank(input,d) of all input. This is similar to rank_gmean_amean_diff operator but in time-series space"
+ts_kurtosis,Time Series,Returns kurtosis of x for the last d days
+ts_mean,Time Series,Returns average value of x for the past d days.
+ts_min_max_diff,Time Series,"Returns x - f * (ts_min(x, d) + ts_max(x, d)). If not specified, by default f = 0.5"
+ts_arg_max,Time Series,"Returns the relative index of the max value in the time series for the past d days. If the current day has the max value for the past d days, it returns 0. If previous day has the max value for the past d days, it returns 1"
+ts_max,Time Series,Returns max value of x for the past d days
+ts_min_max_cps,Time Series,"Returns (ts_min(x, d) + ts_max(x, d)) - f * x. If not specified, by default f = 2"
+ts_rank,Time Series,"Rank the values of x for each instrument over the past d days, then return the rank of the current value + constant. If not specified, by default, constant = 0."
+ts_ir,Time Series,"Return information ratio ts_mean(x, d) / ts_std_dev(x, d)"
+ts_delay,Time Series,Returns x value d days ago
+ts_theilsen,Time Series,Theil Sen slope estimator of inputs for the past n days.
+hump_decay,Time Series,This operator helps to ignore the values that changed too little corresponding to previous ones
+ts_weighted_decay,Time Series,"Instead of replacing today's value with yesterday's as in ts_decay(x, 1), it assigns weighted average of today's and yesterday's values with weight on today's value being k and yesterday's being (1-k)"
+ts_quantile,Time Series,"It calculates ts_rank and apply to its value an inverse cumulative density function from driver distribution. Possible values of driver (optional ) are ""gaussian"", ""uniform"", ""cauchy"" distribution where ""gaussian"" is the default."
+ts_min,Time Series,Returns min value of x for the past d days
+ts_count_nans,Time Series,Returns the number of NaN values in x for the past d days
+ts_covariance,Time Series,Returns covariance of y and x for the past d days
+ts_co_skewness,Time Series,Returns coskewness of y and x for the past d days
+ts_min_diff,Time Series,"Returns x - ts_min(x, d)"
+ts_decay_linear,Time Series,Returns the linear decay on x for the past d days. Dense parameter=false means operator works in sparse mode and we treat NaN as 0. In dense mode we do not.
+jump_decay,Time Series,If there is a huge jump in current data compare to previous one
+ts_moment,Time Series,Returns K-th central moment of x for the past d days
+ts_arg_min,Time Series,"Returns the relative index of the min value in the time series for the past d days; If the current day has the min value for the past d days, it returns 0; If previous day has the min value for the past d days, it returns 1."
+ts_regression,Time Series,Returns various parameters related to regression function
+ts_skewness,Time Series,Return skewness of x for the past d days
+ts_max_diff,Time Series,"Returns x - ts_max(x, d)"
+kth_element,Time Series,Returns K-th value of input by looking through lookback days. This operator can be used to backfill missing data if k=1
+hump,Time Series,Limits amount and magnitude of changes in input (thus reducing turnover)
+ts_median,Time Series,Returns median value of x for the past d days
+ts_delta,Time Series,"Returns x - ts_delay(x, d)"
+ts_poly_regression,Time Series,"Returns y - Ey, where Ey = x + x^2 + ... + x^k over d days; k must be specified as a keyword argument"
+ts_vector_proj,Time Series,Returns vector projection of x onto y in time-series space.
+ts_target_tvr_decay,Time Series,"Tune ""ts_decay"" to have a turnover equal to a certain target, with optimization weight range between lambda_min, lambda_max"
+ts_target_tvr_delta_limit,Time Series,"Tune ""ts_delta_limit"" to have a turnover equal to a certain target with optimization weight range between lambda_min, lambda_max. Also, please be aware of the scaling for x and y. Besides setting y as adv20 or volume related data, you can also set y as a constant."
+ts_target_tvr_hump,Time Series,"Tune ""hump"" to have a turnover equal to a certain target with optimization weight range between lambda_min, lambda_max."
+ts_delta_limit,Time Series,"Limit the change in the Alpha position x between dates to a specified fraction of y. The ""limit_volume"" can be in the range of 0 to 1. Also, please be aware of the scaling for x and y. Besides setting y as adv20 or volume related data, you can also set y as a constant."
+winsorize,Cross Sectional,"Winsorizes x to make sure that all values in x are between the lower and upper limits, which are specified as multiple of std."
+rank,Cross Sectional,"Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0"
+regression_proj,Cross Sectional,Conducts the cross-sectional regression on the stocks with Y as target and X as the independent variable
+vector_neut,Cross Sectional,"For given vectors x and y, it finds a new vector x* (output) such that x* is orthogonal to y"
+regression_neut,Cross Sectional,Conducts the cross-sectional regression on the stocks with Y as target and X as the independent variable
+zscore,Cross Sectional,Z-score is a numerical measurement that describes a value's relationship to the mean of a group of values. Z-score is measured in terms of standard deviations from the mean
+scale_down,Cross Sectional,Scales all values in each day proportionately between 0 and 1 such that minimum value maps to 0 and maximum value maps to 1. Constant is the offset by which final result is subtracted
+truncate,Cross Sectional,"Operator truncates all values of x to maxPercent. Here, maxPercent is in decimal notation"
+scale,Cross Sectional,Scales input to booksize. We can also scale the long positions and short positions to separate scales by mentioning additional parameters to the operator
+rank_by_side,Cross Sectional,Ranks positive and negative input separately and scale to book. For precise sorting use rate=0
+normalize,Cross Sectional,"Calculates the mean value of all valid alpha values for a certain date, then subtracts that mean from each element"
+generalized_rank,Cross Sectional,The idea is that difference between instrument values raised to the power of m is added to the rank of instrument with bigger value and subtracted from the rank of instrument with lesser value. More details in the notes at the end of page
+one_side,Cross Sectional,"Shifts all instruments up or down so that the Alpha becomes long-only or short-only (if side = short), respectively."
+rank_gmean_amean_diff,Cross Sectional,Operator returns difference of geometric mean and arithmetic mean of cross sectional rank of inputs
+quantile,Cross Sectional,"Rank the raw vector, shift the ranked Alpha vector, apply distribution (gaussian, cauchy, uniform). If driver is uniform, it simply subtract each Alpha value with the mean of all Alpha values in the Alpha vector"
+vector_proj,Cross Sectional,Returns vector projection of x onto y.
+multi_regression,Cross Sectional,"Perform multivariable regression of multiple independent variables (x1,x2,...) on a dependent variable (y) across number of days.
+
+If days = n (n >= 0), will include past n days in the regression. Setting days = 0 indicates that we're only using today (x1, x2, ...) to predict y.
+
+If lag = m (m >= 0), will lag (x1, x2, ...) for m days for prediction.
+
+Options for solver: ""SVD""(default), ""QR"", ""NORMAL"""

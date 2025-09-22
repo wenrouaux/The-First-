@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspiration House - BRAIN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .inspiration-house-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-section h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header-section p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background: #2980b9;
+        }
+
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .config-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .form-input[type="select"] {
+            cursor: pointer;
+        }
+
+        .form-input option {
+            padding: 8px;
+        }
+
+        .config-section .form-group {
+            margin-bottom: 20px;
+        }
+
+        .config-section .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .config-section small {
+            display: block;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .target-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .target-header {
+            background: #e74c3c;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .target-content {
+            padding: 20px;
+        }
+
+        .target-display {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .target-display h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+
+        .target-text {
+            color: #495057;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .expression-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .expression-header {
+            background: #9b59b6;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .expression-content {
+            padding: 20px;
+        }
+
+        .expression-editor {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            background: white;
+            color: #333;
+        }
+
+        .expression-editor:focus {
+            outline: none;
+            border-color: #9b59b6;
+            box-shadow: 0 0 5px rgba(155, 89, 182, 0.3);
+        }
+
+        .expression-editor::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        .evaluation-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .evaluation-header {
+            background: #f39c12;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .evaluation-content {
+            padding: 20px;
+        }
+
+        .evaluation-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal;
+        }
+
+        .filter-controls input[type="range"] {
+            width: 100px;
+        }
+
+        .filter-controls span {
+            min-width: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .evaluation-table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .evaluation-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .evaluation-table th {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .evaluation-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: top;
+        }
+
+        .evaluation-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .score-cell {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .score-high {
+            color: #27ae60;
+        }
+
+        .score-medium {
+            color: #f39c12;
+        }
+
+        .score-low {
+            color: #e74c3c;
+        }
+
+        .operator-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .operator-category {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .operator-description {
+            font-size: 13px;
+            color: #495057;
+            margin-top: 8px;
+            line-height: 1.4;
+            max-width: 300px;
+        }
+
+        .operator-definition {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 6px;
+            line-height: 1.3;
+            max-width: 300px;
+            font-style: italic;
+        }
+
+        .reason-text {
+            max-width: 300px;
+            line-height: 1.4;
+            font-size: 13px;
+        }
+
+        .progress-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-header {
+            background: #27ae60;
+            color: white;
+            padding: 15px 20px;
+        }
+
+        .progress-content {
+            padding: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification.success {
+            background: #27ae60;
+        }
+
+        .notification.error {
+            background: #e74c3c;
+        }
+
+        .notification.warning {
+            background: #f39c12;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-message {
+            color: white;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .export-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .export-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .stat-high .stat-number {
+            color: #27ae60;
+        }
+
+        .stat-medium .stat-number {
+            color: #f39c12;
+        }
+
+        .stat-low .stat-number {
+            color: #e74c3c;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: #3498db;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #3498db;
+            border: 1px solid #3498db;
+        }
+
+        .btn-outline:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .login-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .login-spinner {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="inspiration-house-container">
+        <a href="{{ url_for('index') }}" class="back-button">← Back to Main</a>
+        
+        <div class="header-section">
+            <h1>🎯 Inspiration House</h1>
+            <p>AI-powered operator suggestions to enhance your current expression</p>
+        </div>
+
+        <!-- API Configuration Section -->
+        <div class="config-section" id="apiConfigSection">
+            <h3>API Configuration</h3>
+            <div class="form-group">
+                <label for="modelProvider">AI Model Provider:</label>
+                <select id="modelProvider" class="form-input">
+                    <option value="deepseek">Deepseek</option>
+                    <option value="kimi">Kimi</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="apiKey">API Key:</label>
+                <input type="password" id="apiKey" class="form-input" placeholder="Enter your API key">
+            </div>
+            <div class="form-group">
+                <label for="modelName">Model Name:</label>
+                <input type="text" id="modelName" class="form-input" placeholder="e.g., deepseek-chat, kimi-k2-0711-preview">
+                <small style="color: #7f8c8d; font-size: 12px;">Enter the specific model name for your chosen provider</small>
+            </div>
+            <div class="form-group">
+                <label for="batchSize">Worker Configuration:</label>
+                <input type="number" id="batchSize" class="form-input" min="1" max="500" value="100" placeholder="100">
+                <small style="color: #7f8c8d; font-size: 12px;">Note: Workers will be set to match the number of operators for maximum parallelization</small>
+            </div>
+            <button id="saveApiKey" class="btn">Test & Save Configuration</button>
+        </div>
+
+        <!-- Show API Config Button (hidden by default) -->
+        <div class="config-section" id="showApiConfigSection" style="display: none;">
+            <h3>API Configuration</h3>
+            <p style="color: #27ae60; margin-bottom: 15px;">✅ API configuration saved successfully</p>
+            <button id="showApiConfig" class="btn btn-secondary">Show API Configuration</button>
+        </div>
+
+        <!-- Target Section -->
+        <div class="target-section">
+            <div class="target-header">
+                <h3>🎯 Quant Research Target</h3>
+                <button id="editTarget" class="btn btn-secondary">Edit Target</button>
+            </div>
+            <div class="target-content">
+                <div class="target-display" id="targetDisplay">
+                    <h4>Current Target:</h4>
+                    <div class="target-text" id="targetText">No target set. Click "Edit Target" to set your research goal.</div>
+                </div>
+                <div class="form-group" id="targetInputGroup" style="display: none;">
+                    <label for="researchTarget">Describe your quant research target:</label>
+                    <textarea id="researchTarget" class="form-input" rows="4" placeholder="e.g., Lower the trading turnover, Improve Sharpe ratio, Reduce drawdown, etc."></textarea>
+                    <div style="margin-top: 10px;">
+                        <button id="saveTarget" class="btn btn-success">Save Target</button>
+                        <button id="cancelTarget" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expression Section -->
+        <div class="expression-section">
+            <div class="expression-header">
+                <h3>📝 Current Expression</h3>
+                <button id="loadFromBRAIN" class="btn btn-secondary">Load from BRAIN</button>
+            </div>
+            <div class="expression-content">
+                <div class="form-group">
+                    <label for="currentExpression">Your current expression:</label>
+                    <textarea id="currentExpression" class="expression-editor" placeholder="Enter your current expression here... (e.g., ts_mean(close, 20) or rank(volume))"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="expressionContext">Expression context (optional):</label>
+                    <textarea id="expressionContext" class="form-input" rows="3" placeholder="Describe what this expression does, its purpose, or any specific context..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Section -->
+        <div class="evaluation-section">
+            <div class="evaluation-header">
+                <h3>🔍 Operator Addition Suggestions</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 14px; color: rgba(255,255,255,0.8);">Operators: <span id="currentBatchSize">0</span></span>
+                    <button id="startEvaluation" class="btn btn-warning">Start AI Evaluation</button>
+                </div>
+            </div>
+            <div class="evaluation-content">
+                <div class="evaluation-controls">
+                    <button id="refreshEvaluation" class="btn btn-secondary">Refresh Results</button>
+                    <button id="exportResults" class="btn">Export Results</button>
+                    <button id="clearResults" class="btn btn-secondary">Clear Results</button>
+                </div>
+
+                <div class="filter-controls">
+                    <label>
+                        Min Score:
+                        <input type="range" id="minScoreFilter" min="0" max="10" value="0">
+                        <span id="minScoreValue">0</span>
+                    </label>
+                    <label>
+                        Max Score:
+                        <input type="range" id="maxScoreFilter" min="0" max="10" value="10">
+                        <span id="maxScoreValue">10</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" id="showHighScores" checked> Show High Scores (8-10)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="showMediumScores" checked> Show Medium Scores (4-7)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="showLowScores" checked> Show Low Scores (0-3)
+                    </label>
+                </div>
+
+                <div class="summary-stats" id="summaryStats" style="display: none;">
+                    <div class="stat-card stat-high">
+                        <div class="stat-number" id="highScoreCount">0</div>
+                        <div class="stat-label">High Scores (8-10)</div>
+                    </div>
+                    <div class="stat-card stat-medium">
+                        <div class="stat-number" id="mediumScoreCount">0</div>
+                        <div class="stat-label">Medium Scores (4-7)</div>
+                    </div>
+                    <div class="stat-card stat-low">
+                        <div class="stat-number" id="lowScoreCount">0</div>
+                        <div class="stat-label">Low Scores (0-3)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalEvaluated">0</div>
+                        <div class="stat-label">Total Evaluated</div>
+                    </div>
+                </div>
+
+                <div class="evaluation-table-container">
+                    <table class="evaluation-table" id="evaluationTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 300px;">Operator</th>
+                                <th style="width: 120px;">Category</th>
+                                <th style="width: 80px;">Score</th>
+                                <th style="width: 350px;">Reason</th>
+                                <th style="width: 100px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="evaluationTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: #7f8c8d; font-style: italic; padding: 40px;">
+                                    No evaluations yet. Set your target and expression, then click "Start AI Evaluation".
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-section" id="progressSection" style="display: none;">
+            <div class="progress-header">
+                <h3>🔄 Evaluation Progress</h3>
+            </div>
+            <div class="progress-content">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%;">0%</div>
+                </div>
+                <div class="progress-stats">
+                    <span id="progressText">Evaluating operators...</span>
+                    <span id="progressCount">0 / 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="export-section">
+            <h3>📊 About the Tool</h3>
+            <p>This tool evaluates all available BRAIN operators as potential ADDITIONS to your current expression. Each operator receives a score from 0-10 based on how well it could be combined with your current expression to better achieve your research target.</p>
+            <div class="export-actions">
+                <button id="exportHighScores" class="btn btn-success">Export High Scores</button>
+                <button id="exportAllResults" class="btn">Export All Results</button>
+                <button id="exportCSV" class="btn btn-secondary">Export as CSV</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BRAIN Login Modal -->
+    <div id="brainLoginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Connect to WorldQuant BRAIN</h3>
+                <span class="close" onclick="closeBrainLoginModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="brainLoginForm" onsubmit="event.preventDefault(); authenticateBrain();">
+                    <div class="form-group">
+                        <label for="brainUsername">Username:</label>
+                        <input type="email" id="brainUsername" class="form-input" placeholder="your.email@domain.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="brainPassword">Password:</label>
+                        <input type="password" id="brainPassword" class="form-input" placeholder="Your password" required>
+                    </div>
+                    <div id="brainLoginStatus" class="login-status"></div>
+                    <div id="loginSpinner" class="login-spinner" style="display: none;">
+                        <div class="spinner"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeBrainLoginModal()" class="btn btn-outline" id="cancelBtn">Cancel</button>
+                <button onclick="authenticateBrain()" class="btn btn-primary" id="loginBtn">Connect</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='brain.js') }}"></script>
+    <script src="{{ url_for('static', filename='inspiration_house.js') }}"></script>
+</body>
+</html> 

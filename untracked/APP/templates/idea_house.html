@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idea House - Data Field Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .idea-house-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .data-fields-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .api-config-section {
+            background: rgba(240, 242, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .data-fields-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .data-fields-table th,
+        .data-fields-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .data-fields-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .data-fields-table tr:hover {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        
+        .data-fields-table tr.selected {
+            background-color: #e3f2fd;
+        }
+        
+        .field-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .selected-fields-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .selected-field-item {
+            display: inline-block;
+            background: #e3f2fd;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .results-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .markdown-content {
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        .markdown-content h1 {
+            color: #333;
+            border-bottom: 2px solid #4caf50;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .markdown-content h2 {
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .markdown-content h3 {
+            color: #666;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .markdown-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .markdown-content li {
+            margin: 5px 0;
+        }
+        
+        .markdown-content pre {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .markdown-content code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .markdown-content strong {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .params-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        
+        .params-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .param-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .param-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .stats-info {
+            margin: 10px 0;
+            color: #666;
+        }
+        
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .toggle-btn {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-btn:hover {
+            background: #e0e0e0;
+            border-color: #999;
+        }
+        
+        /* Data Fields Filter Styles */
+        .data-fields-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 4px 4px 0 0;
+            flex-wrap: wrap;
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-options label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+        
+        .data-fields-stats {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .data-fields-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .data-fields-table th,
+        .data-fields-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .data-fields-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-row th {
+            position: relative;
+        }
+        
+        .sort-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+            padding: 2px 4px;
+            font-size: 12px;
+            color: #6c757d;
+            border-radius: 2px;
+        }
+        
+        .sort-btn:hover {
+            background: #dee2e6;
+            color: #495057;
+        }
+        
+        .sort-btn.asc {
+            color: #28a745;
+        }
+        
+        .sort-btn.desc {
+            color: #dc3545;
+        }
+        
+        .filter-row th {
+            padding: 5px 8px;
+            background: #ffffff;
+        }
+        
+        .column-filter,
+        .column-filter-min,
+        .column-filter-max {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1px solid #ced4da;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .column-filter.active,
+        .column-filter-min.active,
+        .column-filter-max.active {
+            border-color: #4caf50;
+            background-color: #f0f8f0;
+        }
+        
+        .range-filter {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .range-filter input {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .range-filter span {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .data-fields-table tbody tr {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .data-fields-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .data-fields-table tbody tr.selected {
+            background-color: #e8f5e8;
+            border-left: 3px solid #4caf50;
+        }
+        
+        .field-checkbox {
+            cursor: pointer;
+        }
+        
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Idea House</h1>
+            <p class="subtitle">Let Data Speak Out Loud</p>
+            <a href="/" class="btn btn-outline">← Back to Main</a>
+        </header>
+
+        <div class="idea-house-container">
+            <!-- Coze API Configuration Section -->
+            <div class="api-config-section">
+                <h2>Coze API Configuration</h2>
+                <div class="params-section">
+                    <div class="params-row">
+                        <div class="param-group" style="flex: 2;">
+                            <label for="cozeApiTokenInput">
+                                Coze API Token:
+                                <button type="button" id="toggleApiTokenBtn" class="toggle-btn" style="margin-left: 10px; padding: 2px 8px; font-size: 12px;">Show</button>
+                            </label>
+                            <input type="password" id="cozeApiTokenInput" class="form-input" placeholder="Enter your Coze API token" value="sat_xZzjQThWADuE8uePBzh9fI0EN3Qt43OEEJ2pKbZm8SePbjnM7TDVardfmaWOI4JM">
+                        </div>
+                        <div class="param-group">
+                            <label for="workflowIdInput">Workflow ID:</label>
+                            <input type="text" id="workflowIdInput" class="form-input" placeholder="Enter workflow ID" value="7522912027267956786">
+                        </div>
+                    </div>
+                    <div class="info-message" style="margin-top: 10px; font-size: 14px; color: #666;">
+                        <em>Default values are provided. You can replace them with your own Coze API credentials.</em>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button id="saveCozeConfigBtn" class="btn btn-secondary btn-small">Save Configuration</button>
+                        <button id="clearCozeConfigBtn" class="btn btn-outline btn-small" style="margin-left: 10px;">Reset to Default</button>
+                        <span id="saveConfigMessage" style="margin-left: 10px; color: #4caf50; display: none;">Configuration saved!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Fields Loading Section -->
+            <div class="data-fields-section">
+                <h2>Load Data Fields from BRAIN</h2>
+                <div class="params-section">
+                    <div class="params-row">
+                        <div class="param-group">
+                            <label for="regionInput">Region:</label>
+                            <input type="text" id="regionInput" class="form-input" value="USA">
+                        </div>
+                        <div class="param-group">
+                            <label for="delayInput">Delay:</label>
+                            <input type="number" id="delayInput" class="form-input" value="1">
+                        </div>
+                        <div class="param-group">
+                            <label for="universeInput">Universe:</label>
+                            <input type="text" id="universeInput" class="form-input" value="TOP3000">
+                        </div>
+                        <div class="param-group">
+                            <label for="datasetInput">Dataset ID:</label>
+                            <input type="text" id="datasetInput" class="form-input" value="analyst10">
+                        </div>
+                    </div>
+                    <button id="loadDataFieldsBtn" class="btn btn-primary">Load Data Fields</button>
+                </div>
+                
+                <div id="dataFieldsStats" class="stats-info"></div>
+                
+                <div class="table-container" id="tableContainer" style="display: none;">
+                    <!-- Add filtering controls -->
+                    <div class="data-fields-controls">
+                        <div class="filter-label">
+                            <span>Quick Filters 👉</span>
+                        </div>
+                        <div class="filter-options">
+                            <label>
+                                <input type="checkbox" id="filterHighCoverage"> High Coverage (>90%)
+                            </label>
+                            <label>
+                                <input type="checkbox" id="filterPopular"> Popular (>1000 users)
+                            </label>
+                            <label>
+                                <input type="checkbox" id="filterMatrixOnly"> Matrix Type Only
+                            </label>
+                        </div>
+                        <div class="filter-actions">
+                            <button id="selectAllFiltered" class="btn btn-small btn-secondary">Select All Filtered</button>
+                            <button id="clearAllSelected" class="btn btn-small btn-outline">Clear All</button>
+                        </div>
+                    </div>
+                    <div class="data-fields-stats">
+                        <span id="dataFieldsCount">0 fields loaded</span> | 
+                        <span id="filteredCount">0 filtered</span> | 
+                        <span id="selectedFieldsCount">0 selected</span>
+                    </div>
+                    
+                    <table class="data-fields-table" id="dataFieldsTable">
+                        <thead>
+                            <tr class="header-row">
+                                <th style="width: 40px;">
+                                    <input type="checkbox" id="selectAllCheckbox" title="Select/Deselect All">
+                                </th>
+                                <th style="width: 200px; min-width: 150px;">
+                                    Field ID
+                                    <button class="sort-btn" data-column="id" data-order="asc">↕</button>
+                                </th>
+                                <th style="min-width: 300px;">
+                                    Description
+                                    <button class="sort-btn" data-column="description" data-order="asc">↕</button>
+                                </th>
+                                <th style="width: 100px;">
+                                    Type
+                                    <button class="sort-btn" data-column="type" data-order="asc">↕</button>
+                                </th>
+                                <th style="width: 150px;">
+                                    Coverage
+                                    <button class="sort-btn" data-column="coverage" data-order="asc">↕</button>
+                                </th>
+                                <th style="width: 100px;">
+                                    Users
+                                    <button class="sort-btn" data-column="userCount" data-order="asc">↕</button>
+                                </th>
+                                <th style="width: 100px;">
+                                    Alphas
+                                    <button class="sort-btn" data-column="alphaCount" data-order="asc">↕</button>
+                                </th>
+                            </tr>
+                            <tr class="filter-row">
+                                <th></th>
+                                <th>
+                                    <input type="text" class="column-filter" data-column="id" placeholder="Filter ID...">
+                                </th>
+                                <th>
+                                    <input type="text" class="column-filter" data-column="description" placeholder="Filter description...">
+                                </th>
+                                <th>
+                                    <select class="column-filter" data-column="type" id="typeFilter">
+                                        <option value="">All Types</option>
+                                    </select>
+                                </th>
+                                <th>
+                                    <div class="range-filter">
+                                        <input type="number" class="column-filter-min" data-column="coverage" placeholder="Min %" min="0" max="100" step="0.1">
+                                        <span>-</span>
+                                        <input type="number" class="column-filter-max" data-column="coverage" placeholder="Max %" min="0" max="100" step="0.1">
+                                    </div>
+                                </th>
+                                <th>
+                                    <input type="number" class="column-filter" data-column="userCount" placeholder="Min users" min="0">
+                                </th>
+                                <th>
+                                    <input type="number" class="column-filter" data-column="alphaCount" placeholder="Min alphas" min="0">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataFieldsTableBody">
+                            <!-- Table rows will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Selected Fields Section -->
+            <div class="selected-fields-section" id="selectedFieldsSection" style="display: none;">
+                <h2>Selected Fields</h2>
+                <div id="selectedFieldsList"></div>
+                <button id="clearSelectionBtn" class="btn btn-secondary">Clear Selection</button>
+                <button id="processFieldsBtn" class="btn btn-primary">Process Selected Fields</button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h2>Analysis Results</h2>
+                <div class="markdown-content" id="resultsContent">
+                    <!-- Results will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <h3>Processing...</h3>
+            <p>Please wait while we analyze your selected fields...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='idea_house.js') }}"></script>
+</body>
+</html> 

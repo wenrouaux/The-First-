@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper Keyword Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Paper Keyword Analysis</h1>
+            <p class="subtitle">Extract and analyze keywords from research papers using Deepseek AI</p>
+            <a href="/" class="btn btn-outline">← Back to Main</a>
+        </header>
+
+        <div class="paper-analysis-container">
+            <!-- API Key Configuration -->
+            <div class="api-key-section">
+                <h2>Deepseek API Configuration</h2>
+                <div class="form-group">
+                    <label for="apiKey">API Key:</label>
+                    <input type="password" id="apiKey" class="form-input" placeholder="Enter your Deepseek API key">
+                    <button id="saveApiKey" class="btn btn-secondary">Save API Key</button>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="upload-section">
+                <h2>Upload Paper</h2>
+                <div class="file-upload-container">
+                    <input type="file" id="paperFile" accept=".pdf,.txt,.doc,.docx,.rtf,.tex,.latex,.md,.markdown" class="file-input">
+                    <label for="paperFile" class="file-label">
+                        <span class="upload-icon">📄</span>
+                        <span class="upload-text">Choose a file or drag it here</span>
+                        <span class="file-types">Supports: PDF, TXT, DOC/DOCX, RTF, LaTeX, Markdown</span>
+                    </label>
+                </div>
+                <div id="fileInfo" class="file-info"></div>
+            </div>
+
+            <!-- Analysis Options -->
+            <div class="analysis-options">
+                <h2>Analysis Options</h2>
+                <div class="options-grid">
+                    <label class="option-checkbox">
+                        <input type="checkbox" id="findRelatedWorks" checked>
+                        Extract Mathematical Formulas
+                    </label>
+                    <label class="option-checkbox">
+                        <input type="checkbox" id="extractKeywords">
+                        Extract Keywords
+                    </label>
+                    <label class="option-checkbox">
+                        <input type="checkbox" id="generateSummary">
+                        Generate Summary
+                    </label>
+                </div>
+                <button id="analyzePaper" class="btn btn-primary btn-large">Analyze Paper</button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" style="display: none;">
+                <h2>Analysis Results</h2>
+                <div class="results-tabs">
+                    <button class="tab-btn active" data-tab="keywords">Keywords</button>
+                    <button class="tab-btn" data-tab="summary">Summary</button>
+                    <button class="tab-btn" data-tab="related">Formulas</button>
+                </div>
+                <div class="tab-content">
+                    <div id="keywordsTab" class="tab-pane active">
+                        <div class="keywords-container"></div>
+                    </div>
+                    <div id="summaryTab" class="tab-pane">
+                        <div class="summary-container"></div>
+                    </div>
+                    <div id="relatedTab" class="tab-pane">
+                        <div class="related-works-container"></div>
+                    </div>
+                </div>
+                <div class="export-section">
+                    <button id="exportResults" class="btn btn-secondary">Export Results</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='paper_analysis.js') }}"></script>
+</body>
+</html> 
