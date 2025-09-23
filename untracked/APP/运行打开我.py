@@ -566,6 +566,114 @@ python "{os.path.basename(temp_script_path)}"
     except Exception as e:
         return jsonify({'error': f'Failed to run simulator: {str(e)}'}), 500
 
+@app.route('/api/batch/trigger', methods=['POST'])
+def trigger_batch_processing():
+    """
+    Receives a request from the frontend to start a batch process.
+    Launches the batch_runner.py script by dynamically creating a .bat file,
+    which is the most robust method on Windows.
+    """
+    try:
+        import subprocess
+        import sys
+        import os
+        import json
+        import tempfile
+        import shlex
+
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Request body must be JSON'}), 400
+
+        files = data.get('files')
+        username = data.get('username')
+        password = data.get('password')
+        concurrent_count = data.get('concurrentCount', 3)
+        use_multi_sim = data.get('useMultiSim', False)
+        alpha_count_per_slot = data.get('alphaCountPerSlot', 3)
+
+        if not all([files, username, password]):
+            return jsonify({'error': 'Missing required parameters: files, username, password'}), 400
+        
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        temp_dir = os.path.join(script_dir, 'temp_batch_files')
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        manifest_path = None
+        temp_file_paths = []
+        batch_file_path = None
+        try:
+            for file_data in files:
+                content = file_data.get('content')
+                if content is None: continue
+                fd, temp_path = tempfile.mkstemp(suffix='.json', prefix=f"batch_{file_data.get('name', 'unknown')}_", dir=temp_dir)
+                with os.fdopen(fd, 'w', encoding='utf-8') as f: f.write(content)
+                temp_file_paths.append(temp_path)
+
+            if not temp_file_paths:
+                return jsonify({'error': 'No valid file content received'}), 400
+
+            m_fd, manifest_path = tempfile.mkstemp(suffix='.txt', prefix="manifest_", dir=temp_dir)
+            with os.fdopen(m_fd, 'w', encoding='utf-8') as f:
+                for path in temp_file_paths: f.write(f"{path}\n")
+
+            python_executable = sys.executable
+            batch_runner_script = os.path.join(script_dir, 'batch_runner.py')
+
+            # --- Build a robust command string for the .bat file ---
+            command_parts = [
+                f'"{python_executable}"',
+                f'"{batch_runner_script}"',
+                '--username', f'"{username}"',
+                '--password', f'"{password}"',
+                '--concurrent', str(concurrent_count),
+                '--manifest', f'"{manifest_path}"'
+            ]
+            if use_multi_sim:
+                command_parts.extend(['--multi-sim', '--alphas-per-slot', str(alpha_count_per_slot)])
+            
+            full_command = " ".join(command_parts)
+
+            # --- Create a temporary .bat file ---
+            b_fd, batch_file_path = tempfile.mkstemp(suffix='.bat', prefix="run_batch_", dir=temp_dir)
+            batch_content = f'''@echo off
+echo Starting Batch Process...
+cd /d "{script_dir}"
+set PYTHONIOENCODING=UTF-8
+{full_command}
+echo.
+echo Batch process finished. You can close this window.
+pause
+'''
+            with os.fdopen(b_fd, 'w', encoding='utf-8') as f:
+                f.write(batch_content)
+            
+            # --- Execute the .bat file ---
+            # This is the most reliable way to launch a new, visible, and independent console window on Windows
+            subprocess.Popen([batch_file_path], creationflags=subprocess.CREATE_NEW_CONSOLE)
+
+            return jsonify({
+                'success': True,
+                'message': 'Batch processing started in a new, independent window.'
+            })
+
+        except Exception as e:
+            # Clean up any created temp files on error
+            if manifest_path and os.path.exists(manifest_path): os.remove(manifest_path)
+            if batch_file_path and os.path.exists(batch_file_path): os.remove(batch_file_path)
+            for p in temp_file_paths:
+                if os.path.exists(p): os.remove(p)
+            
+            import traceback
+            print(f"❌ Error triggering batch process: {e}\n{traceback.format_exc()}")
+            return jsonify({'error': f'Failed to trigger batch process: {str(e)}'}), 500
+
+    except Exception as e:
+        import traceback
+        print(f"❌ FATAL Error in trigger_batch_processing: {e}\n{traceback.format_exc()}")
+        return jsonify({'error': f'A fatal error occurred: {str(e)}'}), 500
+
+
 @app.route('/api/simulator/stop', methods=['POST'])
 def stop_simulator():
     """Stop running simulator"""
@@ -1319,7 +1427,7 @@ def import_templates():
         new_templates = []
         
         for template in valid_templates:
-            existing_index = next((i for i, t in enumerate(existing_templates) if t['name'] == template['name']), None)
+            existing_index = next((i for i, t in enumerate(templates) if t['name'] == template['name']), None)
             
             if existing_index is not None:
                 duplicates.append(template['name'])
@@ -1486,4 +1594,4 @@ if __name__ == '__main__':
     print("Starting BRAIN Expression Template Decoder Web Application...")
     print("Application will run on http://localhost:5000")
     print("BRAIN API integration included - no separate proxy needed!")
-    app.run(debug=True, host='0.0.0.0', port=5000) 
+    app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,0 +1,1202 @@
+[
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(adv20 - ts_mean(adv20, 5)) / ts_mean(adv20, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(adv20 - ts_mean(adv20, 22)) / ts_mean(adv20, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(adv20 - ts_mean(adv20, 66)) / ts_mean(adv20, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(adv20 - ts_mean(adv20, 126)) / ts_mean(adv20, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(adv20 - ts_mean(adv20, 255)) / ts_mean(adv20, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(cap - ts_mean(cap, 5)) / ts_mean(cap, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(cap - ts_mean(cap, 22)) / ts_mean(cap, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(cap - ts_mean(cap, 66)) / ts_mean(cap, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(cap - ts_mean(cap, 126)) / ts_mean(cap, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(cap - ts_mean(cap, 255)) / ts_mean(cap, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(close - ts_mean(close, 5)) / ts_mean(close, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(close - ts_mean(close, 22)) / ts_mean(close, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(close - ts_mean(close, 66)) / ts_mean(close, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(close - ts_mean(close, 126)) / ts_mean(close, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(close - ts_mean(close, 255)) / ts_mean(close, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(dividend - ts_mean(dividend, 5)) / ts_mean(dividend, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(dividend - ts_mean(dividend, 22)) / ts_mean(dividend, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(dividend - ts_mean(dividend, 66)) / ts_mean(dividend, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(dividend - ts_mean(dividend, 126)) / ts_mean(dividend, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(dividend - ts_mean(dividend, 255)) / ts_mean(dividend, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(high - ts_mean(high, 5)) / ts_mean(high, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(high - ts_mean(high, 22)) / ts_mean(high, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(high - ts_mean(high, 66)) / ts_mean(high, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(high - ts_mean(high, 126)) / ts_mean(high, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(high - ts_mean(high, 255)) / ts_mean(high, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(low - ts_mean(low, 5)) / ts_mean(low, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(low - ts_mean(low, 22)) / ts_mean(low, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(low - ts_mean(low, 66)) / ts_mean(low, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(low - ts_mean(low, 126)) / ts_mean(low, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(low - ts_mean(low, 255)) / ts_mean(low, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(open - ts_mean(open, 5)) / ts_mean(open, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(open - ts_mean(open, 22)) / ts_mean(open, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(open - ts_mean(open, 66)) / ts_mean(open, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(open - ts_mean(open, 126)) / ts_mean(open, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(open - ts_mean(open, 255)) / ts_mean(open, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(returns - ts_mean(returns, 5)) / ts_mean(returns, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(returns - ts_mean(returns, 22)) / ts_mean(returns, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(returns - ts_mean(returns, 66)) / ts_mean(returns, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(returns - ts_mean(returns, 126)) / ts_mean(returns, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(returns - ts_mean(returns, 255)) / ts_mean(returns, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(sharesout - ts_mean(sharesout, 5)) / ts_mean(sharesout, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(sharesout - ts_mean(sharesout, 22)) / ts_mean(sharesout, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(sharesout - ts_mean(sharesout, 66)) / ts_mean(sharesout, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(sharesout - ts_mean(sharesout, 126)) / ts_mean(sharesout, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(sharesout - ts_mean(sharesout, 255)) / ts_mean(sharesout, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(split - ts_mean(split, 5)) / ts_mean(split, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(split - ts_mean(split, 22)) / ts_mean(split, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(split - ts_mean(split, 66)) / ts_mean(split, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(split - ts_mean(split, 126)) / ts_mean(split, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(split - ts_mean(split, 255)) / ts_mean(split, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(volume - ts_mean(volume, 5)) / ts_mean(volume, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(volume - ts_mean(volume, 22)) / ts_mean(volume, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(volume - ts_mean(volume, 66)) / ts_mean(volume, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(volume - ts_mean(volume, 126)) / ts_mean(volume, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(volume - ts_mean(volume, 255)) / ts_mean(volume, 255)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(vwap - ts_mean(vwap, 5)) / ts_mean(vwap, 5)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(vwap - ts_mean(vwap, 22)) / ts_mean(vwap, 22)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(vwap - ts_mean(vwap, 66)) / ts_mean(vwap, 66)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(vwap - ts_mean(vwap, 126)) / ts_mean(vwap, 126)"
+},
+{
+  "type": "REGULAR",
+  "settings": {
+    "instrumentType": "EQUITY",
+    "region": "ASI",
+    "universe": "MINVOL1M",
+    "delay": 1,
+    "decay": 5,
+    "neutralization": "COUNTRY",
+    "truncation": 0.05,
+    "pasteurization": "ON",
+    "testPeriod": "P2Y0M",
+    "unitHandling": "VERIFY",
+    "nanHandling": "OFF",
+    "maxTrade": "ON",
+    "language": "FASTEXPR",
+    "visualization": false
+  },
+  "regular": "-(vwap - ts_mean(vwap, 255)) / ts_mean(vwap, 255)"
+}
+]

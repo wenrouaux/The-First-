@@ -34,36 +34,28 @@ function setupFormValidation() {
     startPosition.addEventListener('input', checkOverwriteWarning);
     randomShuffle.addEventListener('change', checkOverwriteWarning);
     
-    // Handle JSON file selection
+    // Handle folder/file selection
     jsonFile.addEventListener('change', function(e) {
-        const file = e.target.files[0];
+        const files = e.target.files;
         const info = document.getElementById('jsonFileInfo');
         
-        if (file) {
-            info.innerHTML = `
-                <strong>Selected:</strong> ${file.name}<br>
-                <strong>Size:</strong> ${(file.size / 1024).toFixed(1)} KB<br>
-                <strong>Modified:</strong> ${new Date(file.lastModified).toLocaleString()}
-            `;
-            info.style.display = 'block';
+        if (files.length > 0) {
+            const jsonFiles = Array.from(files).filter(file => file.name.endsWith('.json'));
             
-            // Try to read and validate JSON
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (Array.isArray(data)) {
-                        const maxStart = Math.max(0, data.length - 1);
-                        startPosition.max = maxStart;
-                        info.innerHTML += `<br><strong>Expressions:</strong> ${data.length} found`;
-                    } else {
-                        info.innerHTML += '<br><span style="color: #721c24;">⚠️ Warning: Not an array format</span>';
-                    }
-                } catch (err) {
-                    info.innerHTML += '<br><span style="color: #721c24;">❌ Invalid JSON format</span>';
-                }
-            };
-            reader.readAsText(file);
+            if (jsonFiles.length > 0) {
+                info.innerHTML = `
+                    <strong>Selected Folder:</strong> ${jsonFiles.length} .json file(s) found.<br>
+                    <ul style="margin-top: 5px; padding-left: 20px; font-size: 11px;">
+                        ${jsonFiles.slice(0, 10).map(f => `<li>${f.name} (${(f.size / 1024).toFixed(1)} KB)</li>`).join('')}
+                        ${jsonFiles.length > 10 ? '<li>... and more</li>' : ''}
+                    </ul>
+                `;
+                 // Reset start position for batch mode, as it's handled by checkpoints
+                document.getElementById('startPosition').value = 0;
+            } else {
+                info.innerHTML = '<span style="color: #721c24;">❌ No .json files found in the selected folder.</span>';
+            }
+            info.style.display = 'block';
         } else {
             info.style.display = 'none';
         }
@@ -259,90 +251,92 @@ async function testConnection() {
  */
 async function runSimulator() {
     if (isSimulationRunning) {
-        updateStatus('Simulation is already running', 'error');
+        updateStatus('A simulation process is already running.', 'error');
         return;
     }
-    
-    // Validate form
+
     const form = document.getElementById('simulatorForm');
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
     }
-    
-    const jsonFile = document.getElementById('jsonFile').files[0];
-    if (!jsonFile) {
-        updateStatus('Please select a JSON file', 'error');
+
+    const files = document.getElementById('jsonFile').files;
+    if (files.length === 0) {
+        updateStatus('Please select a folder containing .json files.', 'error');
         return;
     }
-    
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('jsonFile', jsonFile);
-    formData.append('username', document.getElementById('username').value);
-    formData.append('password', document.getElementById('password').value);
-    formData.append('startPosition', document.getElementById('startPosition').value);
-    formData.append('concurrentCount', document.getElementById('concurrentCount').value);
-    formData.append('randomShuffle', document.getElementById('randomShuffle').checked);
-    formData.append('useMultiSim', document.getElementById('useMultiSim').checked);
-    formData.append('alphaCountPerSlot', document.getElementById('alphaCountPerSlot').value);
-    
-    // UI updates
+
+    const jsonFiles = Array.from(files).filter(file => file.name.endsWith('.json'));
+    if (jsonFiles.length === 0) {
+        updateStatus('No .json files found in the selected folder.', 'error');
+        return;
+    }
+
+    // UI updates for running state
     isSimulationRunning = true;
     const runBtn = document.getElementById('runSimulator');
-    const stopBtn = document.getElementById('stopBtn');
-    
     runBtn.disabled = true;
-    runBtn.textContent = '🔄 Running...';
-    stopBtn.style.display = 'inline-block';
-    
-    updateStatus('Starting simulation...', 'running');
+    runBtn.textContent = '🔄 Processing...';
+    updateStatus('Starting batch simulation...', 'running');
     showProgress(true);
-    
-    // Create abort controller for stopping simulation
-    simulationAbortController = new AbortController();
-    
+
     try {
         saveSimulatorDefaults();
-        
-        const response = await fetch('/api/simulator/run', {
+
+        // Read all files' content
+        const fileContents = await Promise.all(
+            jsonFiles.map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve({ name: file.name, content: e.target.result });
+                    reader.onerror = e => reject(new Error(`Failed to read file: ${file.name}`));
+                    reader.readAsText(file);
+                });
+            })
+        );
+
+        const payload = {
+            files: fileContents,
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            concurrentCount: parseInt(document.getElementById('concurrentCount').value),
+            useMultiSim: document.getElementById('useMultiSim').checked,
+            alphaCountPerSlot: parseInt(document.getElementById('alphaCountPerSlot').value)
+        };
+
+        const response = await fetch('/api/batch/trigger', {
             method: 'POST',
-            body: formData,
-            signal: simulationAbortController.signal
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
-            updateStatus('✅ Simulator launched in new terminal! Check the terminal window for progress.', 'success');
-            
-            // Show launch information
-            if (data.parameters) {
-                showLaunchInfo(data.parameters);
-            }
-            
-            // Start monitoring log files more frequently since simulation is running
+            updateStatus('✅ Batch process started in a new window! Check the new terminal for progress.', 'success');
+            showLaunchInfo({
+                expressions_count: `Batch of ${jsonFiles.length} files`,
+                concurrent_count: payload.concurrentCount,
+                use_multi_sim: payload.useMultiSim,
+                alpha_count_per_slot: payload.alphaCountPerSlot
+            });
+             // Start monitoring log files to catch logs from the new process
             startLogPolling();
-            
-            // Refresh log files to get the latest simulation log
             setTimeout(() => {
+                userSelectedLogFile = false; // Re-enable auto-selection of latest log
                 refreshLogFiles();
-            }, 3000);
+            }, 5000); // Wait 5 seconds for the new log file to be created
         } else {
-            updateStatus(`❌ Failed to launch simulator: ${data.error}`, 'error');
+            updateStatus(`❌ Failed to start batch process: ${data.error}`, 'error');
         }
+
     } catch (error) {
-        if (error.name === 'AbortError') {
-            updateStatus('⏹️ Simulation stopped by user', 'idle');
-        } else {
-            updateStatus(`❌ Simulation error: ${error.message}`, 'error');
-        }
+        updateStatus(`❌ An error occurred: ${error.message}`, 'error');
     } finally {
         isSimulationRunning = false;
         runBtn.disabled = false;
         runBtn.textContent = '🚀 Start Simulation';
-        stopBtn.style.display = 'none';
-        simulationAbortController = null;
         showProgress(false);
     }
 }
@@ -594,4 +588,4 @@ window.addEventListener('beforeunload', function() {
     if (simulationAbortController) {
         simulationAbortController.abort();
     }
-}); 
+});

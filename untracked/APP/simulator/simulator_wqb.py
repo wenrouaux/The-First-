@@ -18,6 +18,7 @@ import threading
 import time
 import sys
 import msvcrt  # For Windows password input with asterisks
+import hashlib
 from pathlib import Path
 
 # FIX: Change working directory to script location to ensure logs are created in the right place
@@ -73,6 +74,19 @@ def get_password_with_asterisks(prompt):
                 pass  # Ignore non-printable characters
     
     return password
+
+def get_alpha_hash(expression_data):
+    """
+    Generates a SHA256 hash for a given alpha expression to uniquely identify it.
+    It serializes the dictionary to a string to ensure consistency.
+    """
+    # Use a canonical (sorted keys) JSON representation for hashing
+    if not isinstance(expression_data, dict):
+        # Handle cases where the input might not be a dict, though it should be.
+        expression_data = {'expression': str(expression_data)}
+    canonical_string = json.dumps(expression_data, sort_keys=True)
+    return hashlib.sha256(canonical_string.encode('utf-8')).hexdigest()
+
 
 def get_json_filepath():
     """Ask user to input the directory/filepath of expressions_with_settings.json"""
@@ -363,6 +377,89 @@ def monitor_log_file(logger, stop_event, use_multi_sim=False, alpha_count_per_sl
     except Exception as e:
         print(f"⚠️  监控日志文件时出错: {e}")
 
+async def run_simulations_and_get_hashes(wqbs, expressions_with_settings, concurrent_count, use_multi_sim=False, alpha_count_per_slot=None):
+    """
+    Runs simulations, returns a list of hashes for successfully simulated alphas,
+    and detailed results.
+    """
+    if not expressions_with_settings:
+        return [], {}
+
+    # Handle multi-sim conversion inside this function to keep it self-contained
+    if use_multi_sim:
+        original_count = len(expressions_with_settings)
+        expressions_to_run = wqb.to_multi_alphas(expressions_with_settings, alpha_count_per_slot)
+        print(f"✓ 已转换为多重回测(multi-simulatioin)格式. ({original_count} -> {len(expressions_to_run)})")
+    else:
+        expressions_to_run = expressions_with_settings
+    
+    print(f"🚀 开始回测 {len(expressions_to_run)} 个回测槽 (并发数: {concurrent_count})...")
+    
+    # Log multi-sim info if applicable
+    if use_multi_sim and alpha_count_per_slot and wqbs.logger:
+        multi_sim_msg = (f"[MULTI-SIMULATION MODE] 以下是multi simulation的记录，"
+                        f"你的设计是1个multi simulation中有{alpha_count_per_slot}个alpha，"
+                        f"因此需将实际回测数乘以该乘数，才得到实际已完成的Alpha个数。")
+        wqbs.logger.info("="*80)
+        wqbs.logger.info(multi_sim_msg)
+        wqbs.logger.info("="*80)
+
+    resps = await wqbs.concurrent_simulate(
+        expressions_to_run,
+        concurrent_count,
+        log_gap=10
+    )
+
+    successful_hashes = []
+    alpha_ids = []
+    failed_slots = 0
+    
+    print("\n" + "="*60)
+    print("回测结果分析")
+    print("="*60)
+    
+    for i, resp in enumerate(resps):
+        # For multi-sim, we need to get hashes for all alphas in the slot
+        if use_multi_sim:
+            start_index = i * alpha_count_per_slot
+            end_index = start_index + alpha_count_per_slot
+            original_expressions_in_slot = expressions_with_settings[start_index:end_index]
+        else:
+            original_expressions_in_slot = [expressions_with_settings[i]]
+
+        try:
+            alpha_id = resp.json()['alpha']
+            alpha_ids.append(alpha_id)
+            print(f"  ✅ 成功: Alpha ID {alpha_id} (回测槽 {i+1})")
+            
+            # If successful, add all corresponding original alpha hashes to the list
+            for expr in original_expressions_in_slot:
+                expr_hash = get_alpha_hash(expr)
+                successful_hashes.append(expr_hash)
+                
+        except Exception as e:
+            failed_slots += 1
+            print(f"  ❌ 失败: 无法从响应中获取回测槽 {i+1} 的 Alpha ID. 错误: {e}")
+
+    total_alphas = len(expressions_with_settings)
+    successful_alpha_count = len(successful_hashes)
+    failed_alpha_count = total_alphas - successful_alpha_count
+
+    results_summary = {
+        "total_alphas": total_alphas,
+        "successful_alphas": successful_alpha_count,
+        "failed_alphas": failed_alpha_count,
+        "total_slots": len(expressions_to_run),
+        "successful_slots": len(alpha_ids),
+        "failed_slots": failed_slots,
+        "alphaIds": alpha_ids,
+        "use_multi_sim": use_multi_sim,
+        "alpha_count_per_slot": alpha_count_per_slot if use_multi_sim else None
+    }
+    
+    return successful_hashes, results_summary
+
+
 async def automated_main(json_file_content, username, password, start_position=0, concurrent_count=3, 
                         random_shuffle=False, use_multi_sim=False, alpha_count_per_slot=3):
     """Automated main function for web interface - takes all parameters at once"""
@@ -371,11 +468,8 @@ async def automated_main(json_file_content, username, password, start_position=0
         print("="*60)
         
         # Parse JSON content directly
-        import json
         expressions_with_settings = json.loads(json_file_content)
-        expressions_count = len(expressions_with_settings)
-        
-        print(f"📊 已加载 {expressions_count} 个 alpha 配置")
+        print(f"📊 已加载 {len(expressions_with_settings)} 个 alpha 配置")
         
         # Setup logger and session
         logger = wqb.wqb_logger()
@@ -383,8 +477,6 @@ async def automated_main(json_file_content, username, password, start_position=0
         
         # Test connection
         resp = wqbs.locate_field('open')
-        print(f"连接测试结果: resp.ok = {resp.ok}")
-        
         if not resp.ok:
             print("❌ 身份验证失败")
             return {"success": False, "error": "Authentication failed"}
@@ -401,77 +493,26 @@ async def automated_main(json_file_content, username, password, start_position=0
             random.shuffle(expressions_with_settings)
             print(f"🔀 已随机打乱 {len(expressions_with_settings)} 个表达式的顺序")
         
-        if use_multi_sim:
-            # Convert to multi-alphas format
-            original_count = len(expressions_with_settings)
-            expressions_with_settings = wqb.to_multi_alphas(expressions_with_settings, alpha_count_per_slot)
-            print(f"✓ 已转换为多重回测(multi-simulatioin)格式")
-            print(f"📊 原始表达式数: {original_count}")
-            print(f"🎯 每槽alpha数: {alpha_count_per_slot}")
-            
-            
-            # Write multi-simulation info to log
-            multi_sim_msg = (f"[MULTI-SIMULATION MODE] 以下是multi simulation的记录，"
-                            f"你的设计是1个multi simulation中有{alpha_count_per_slot}个alpha，"
-                            f"因此需将实际回测数乘以该乘数，才得到实际已完成的Alpha个数。")
-            logger.info("="*80)
-            logger.info(multi_sim_msg)
-            logger.info("="*80)
-        
-        print(f"🔄 使用 {concurrent_count} 个并发回测")
-        print("\n" + "="*60)
-        print("运行回测")
-        print("="*60)
-        
-        if use_multi_sim:
-            print("开始多重回测(multi-simulatioin)并发回测...")
-        else:
-            print("开始并发回测...")
-        
-        # Run simulations
-        resps = await wqbs.concurrent_simulate(
+        # The core simulation logic is now in the new function
+        successful_hashes, results_summary = await run_simulations_and_get_hashes(
+            wqbs, 
             expressions_with_settings, 
             concurrent_count, 
-            log_gap=10
+            use_multi_sim, 
+            alpha_count_per_slot
         )
         
-        # Collect results
-        alpha_ids = []
-        successful_count = 0
-        failed_count = 0
-        
         print("\n" + "="*60)
-        print("回测结果")
+        print("WEB 界面自动化运行总结")
         print("="*60)
-        
-        if use_multi_sim:
-            print(f"成功完成 {len(resps)} 个多重回测(multi-simulatioin)槽的回测")
-        else:
-            print(f"成功完成 {len(resps)} 个回测")
-        
-        print("\nAlpha IDs:")
-        for i, resp in enumerate(resps):
-            try:
-                alpha_id = resp.json()['alpha']
-                alpha_ids.append(alpha_id)
-                successful_count += 1
-                print(f"  {i+1:4d}. {alpha_id}")
-            except Exception as e:
-                failed_count += 1
-                print(f"  {i+1:4d}. 错误: {e}")
-        
-        print("\n✅ 处理完成!")
+        print(f"✅ 成功模拟的 Alpha 数量: {results_summary['successful_alphas']}")
+        print(f"❌ 失败的 Alpha 数量: {results_summary['failed_alphas']}")
+        print(f"📄 生成的 Alpha ID 数量: {len(results_summary['alphaIds'])}")
+        print("="*60)
         
         return {
             "success": True,
-            "results": {
-                "total": len(resps),
-                "successful": successful_count,
-                "failed": failed_count,
-                "alphaIds": alpha_ids,
-                "use_multi_sim": use_multi_sim,
-                "alpha_count_per_slot": alpha_count_per_slot if use_multi_sim else None
-            }
+            "results": results_summary
         }
         
     except Exception as e:
@@ -524,24 +565,9 @@ async def main():
     
     if use_multi_sim:
         alpha_count_per_slot = get_alpha_count_per_slot()
-        # Convert to multi-alphas format
-        original_count = len(expressions_with_settings)
-        expressions_with_settings = wqb.to_multi_alphas(expressions_with_settings, alpha_count_per_slot)
-        print(f"\n✓ 已转换为多重回测(multi-simulatioin)格式")
-        print(f"📊 原始表达式数: {original_count}")
-        print(f"🎯 每槽alpha数: {alpha_count_per_slot}")
     
-    # Calculate how many expressions will be processed
+    # The multi-sim conversion and logging is now handled inside run_simulations_and_get_hashes
     print(f"🔄 使用 {concurrent_count} 个并发回测")
-    
-    # Step 4: Write multi-simulation info to log if applicable
-    if use_multi_sim and alpha_count_per_slot and logger:
-        multi_sim_msg = (f"[MULTI-SIMULATION MODE] 以下是multi simulation的记录，"
-                        f"你的设计是1个multi simulation中有{alpha_count_per_slot}个alpha，"
-                        f"因此需将实际回测数乘以该乘数，才得到实际已完成的Alpha个数。")
-        logger.info("="*80)
-        logger.info(multi_sim_msg)
-        logger.info("="*80)
     
     # Step 5: Start log monitoring in background
     stop_log_monitor = threading.Event()
@@ -553,41 +579,35 @@ async def main():
     log_thread.start()
     
     # Step 6: Run simulations
-    print("\n" + "="*60)
-    print("运行回测")
-    print("="*60)
-    if use_multi_sim:
-        print("开始多重回测(multi-simulatioin)并发回测...")
-    else:
-        print("开始并发回测...")
-    
     try:
-        resps = await wqbs.concurrent_simulate(
-            expressions_with_settings, 
-            concurrent_count, 
-            log_gap=10
+        # Run simulations using the new refactored function
+        successful_hashes, results_summary = await run_simulations_and_get_hashes(
+            wqbs,
+            expressions_with_settings,
+            concurrent_count,
+            use_multi_sim,
+            alpha_count_per_slot
         )
-        
+
         # Stop log monitoring
         stop_log_monitor.set()
-        
-        # Print results
+
+        # Print results from the summary
         print("\n" + "="*60)
-        print("回测结果")
+        print("回测结果总结")
         print("="*60)
         
         if use_multi_sim:
-            print(f"成功完成 {len(resps)} 个多重回测(multi-simulatioin)槽的回测")
+            print(f"成功完成 {results_summary['successful_slots']} / {results_summary['total_slots']} 个多重回测槽")
         else:
-            print(f"成功完成 {len(resps)} 个回测")
+            print(f"成功完成 {results_summary['successful_alphas']} / {results_summary['total_alphas']} 个回测")
+
+        print(f"\n总计 {results_summary['successful_alphas']} 个 Alpha 模拟成功。")
         
-        print("\nAlpha IDs:")
-        for i, resp in enumerate(resps):
-            try:
-                alpha_id = resp.json()['alpha']
+        if results_summary['alphaIds']:
+            print("\nAlpha IDs:")
+            for i, alpha_id in enumerate(results_summary['alphaIds']):
                 print(f"  {i+1:4d}. {alpha_id}")
-            except Exception as e:
-                print(f"  {i+1:4d}. 错误: {e}")
                 
     except KeyboardInterrupt:
         print("\n\n⚠️  回测被用户中断")
@@ -599,4 +619,4 @@ async def main():
     print("\n✅ 处理完成!")
 
 if __name__ == '__main__':
-    asyncio.run(main()) 
+    asyncio.run(main())

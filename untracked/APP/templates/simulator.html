@@ -216,9 +216,9 @@
                 <form id="simulatorForm">
                     <!-- JSON File Selection -->
                     <div class="form-group">
-                        <label for="jsonFile">📁 Expressions JSON File</label>
-                        <input type="file" id="jsonFile" accept=".json" required>
-                        <div class="parameter-help">Select expressions_with_settings.json file</div>
+                        <label for="jsonFile">📁 Select Folder with JSON Files</label>
+                        <input type="file" id="jsonFile" webkitdirectory directory required>
+                        <div class="parameter-help">Select a folder containing one or more .json files for batch processing.</div>
                         <div id="jsonFileInfo" class="file-info" style="display: none;"></div>
                     </div>
                     
@@ -339,4 +339,4 @@
 
     <script src="{{ url_for('static', filename='simulator.js') }}"></script>
 </body>
-</html> 
+</html>
