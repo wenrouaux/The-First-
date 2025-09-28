@@ -1,6 +1,7 @@
 import os
 import json
 import asyncio
+import traceback
 from simulator import simulator_wqb
 
 class BatchProcessor:
@@ -59,53 +60,62 @@ class BatchProcessor:
         print("\n" + "="*80)
         print("🏁 开始多文件批处理...")
         print(f"📂 待处理文件总数: {len(self.file_paths)}")
+        print(f"DEBUG: 初始文件列表: {self.file_paths}")
         print("="*80)
 
-        for i, file_path in enumerate(self.file_paths):
-            print(f"\n--- 文件 {i+1}/{len(self.file_paths)}: {os.path.basename(file_path)} ---")
+        try:
+            for i, file_path in enumerate(self.file_paths):
+                print(f"\n--- 文件 {i+1}/{len(self.file_paths)}: {os.path.basename(file_path)} ---")
+                print(f"DEBUG: 开始处理循环第 {i+1} 次, 文件: {file_path}")
 
-            try:
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    all_expressions = json.load(f)
-                if not isinstance(all_expressions, list):
-                    print(f"❌ 错误: JSON 文件内容不是一个列表。跳过此文件。")
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        all_expressions = json.load(f)
+                    if not isinstance(all_expressions, list):
+                        print(f"❌ 错误: JSON 文件内容不是一个列表。跳过此文件。")
+                        continue
+                except Exception as e:
+                    print(f"❌ 错误: 无法读取或解析 JSON 文件 {file_path}: {e}. 跳过此文件。")
                     continue
-            except Exception as e:
-                print(f"❌ 错误: 无法读取或解析 JSON 文件 {file_path}: {e}. 跳过此文件。")
-                continue
 
-            checkpoint_path = self._get_checkpoint_path(file_path)
-            completed_hashes = self._load_completed_hashes(checkpoint_path)
-            
-            print(f"🔍 在检查点文件中找到 {len(completed_hashes)} 个已完成的 Alpha。")
+                checkpoint_path = self._get_checkpoint_path(file_path)
+                completed_hashes = self._load_completed_hashes(checkpoint_path)
+                
+                print(f"🔍 在检查点文件中找到 {len(completed_hashes)} 个已完成的 Alpha。")
 
-            expressions_to_run = [
-                expr for expr in all_expressions 
-                if simulator_wqb.get_alpha_hash(expr) not in completed_hashes
-            ]
-            
-            if not expressions_to_run:
-                print("🎉 此文件中的所有 Alpha 均已完成回测。跳至下一个文件。")
-                continue
+                expressions_to_run = [
+                    expr for expr in all_expressions 
+                    if simulator_wqb.get_alpha_hash(expr) not in completed_hashes
+                ]
+                
+                if not expressions_to_run:
+                    print("🎉 此文件中的所有 Alpha 均已完成回测。跳至下一个文件。")
+                    continue
 
-            print(f"📊 待回测 Alpha 数量: {len(expressions_to_run)} / {len(all_expressions)}")
+                print(f"📊 待回测 Alpha 数量: {len(expressions_to_run)} / {len(all_expressions)}")
 
-            # Run the simulation for the remaining alphas in the current file
-            newly_successful_hashes, results_summary = await simulator_wqb.run_simulations_and_get_hashes(
-                self.wqbs,
-                expressions_to_run,
-                self.concurrent_count,
-                self.use_multi_sim,
-                self.alpha_count_per_slot
-            )
+                # Run the simulation for the remaining alphas in the current file
+                newly_successful_hashes, results_summary = await simulator_wqb.run_simulations_and_get_hashes(
+                    self.wqbs,
+                    expressions_to_run,
+                    self.concurrent_count,
+                    self.use_multi_sim,
+                    self.alpha_count_per_slot
+                )
 
-            self._append_hashes_to_checkpoint(checkpoint_path, newly_successful_hashes)
-            
-            print(f"📄 文件处理完毕: {os.path.basename(file_path)}")
-            print(f"   - 本次成功: {results_summary.get('successful_alphas', 0)} 个 Alphas")
-            print(f"   - 本次失败: {results_summary.get('failed_alphas', 0)} 个 Alphas")
-            print(f"   - 生成的 Alpha IDs: {len(results_summary.get('alphaIds', []))} 个")
-            print("-" * (len(os.path.basename(file_path)) + 22))
+                self._append_hashes_to_checkpoint(checkpoint_path, newly_successful_hashes)
+                
+                print(f"📄 文件处理完毕: {os.path.basename(file_path)}")
+                print(f"   - 本次成功: {results_summary.get('successful_alphas', 0)} 个 Alphas")
+                print(f"   - 本次失败: {results_summary.get('failed_alphas', 0)} 个 Alphas")
+                print(f"   - 生成的 Alpha IDs: {len(results_summary.get('alphaIds', []))} 个")
+                print("-" * (len(os.path.basename(file_path)) + 22))
+                print(f"DEBUG: 完成处理循环第 {i+1} 次。剩余文件列表: {self.file_paths[i+1:]}")
+
+        except Exception as e:
+            print(f"🔥🔥🔥 在批处理主循环中发生严重错误: {e}")
+            print(traceback.format_exc())
+            print("🔥🔥🔥 批处理已终止。")
 
         print("\n" + "="*80)
         print("✨ 所有文件批处理完成! ✨")

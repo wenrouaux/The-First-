@@ -1,8 +1,8 @@
 {
   "credentials": {
-    "email": "youremail@mai.com",
-      "password": "yourpassword"
-    },
+    "email": "wenrouaux6@gmail.com",
+    "password": "2361945066ak"
+  },
   "api_settings": {
     "base_url": "https://api.worldquantbrain.com",
     "timeout": 30,
@@ -28,4 +28,4 @@
     "language": "FASTEXPR",
     "visualization": true
   }
-} 
+}
