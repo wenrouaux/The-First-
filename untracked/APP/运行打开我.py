@@ -580,6 +580,7 @@ def trigger_batch_processing():
         import json
         import tempfile
         import shlex
+        import shutil
 
         data = request.get_json()
         if not data:
@@ -588,15 +589,20 @@ def trigger_batch_processing():
         files = data.get('files')
         username = data.get('username')
         password = data.get('password')
+        batch_name = data.get('batchName', f"Batch_{datetime.now().strftime('%Y%m%d_%H%M%S')}")
         concurrent_count = data.get('concurrentCount', 3)
         use_multi_sim = data.get('useMultiSim', False)
         alpha_count_per_slot = data.get('alphaCountPerSlot', 3)
 
-        if not all([files, username, password]):
-            return jsonify({'error': 'Missing required parameters: files, username, password'}), 400
+        if not all([files, username, password, batch_name]):
+            return jsonify({'error': 'Missing required parameters: files, username, password, batchName'}), 400
         
         script_dir = os.path.dirname(os.path.abspath(__file__))
         temp_dir = os.path.join(script_dir, 'temp_batch_files')
+
+        # --- Automatic Cleanup Logic ---
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
         os.makedirs(temp_dir, exist_ok=True)
         
         manifest_path = None
@@ -626,6 +632,7 @@ def trigger_batch_processing():
                 f'"{batch_runner_script}"',
                 '--username', f'"{username}"',
                 '--password', f'"{password}"',
+                '--batch_name', f'"{batch_name}"',
                 '--concurrent', str(concurrent_count),
                 '--manifest', f'"{manifest_path}"'
             ]

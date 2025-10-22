@@ -1,4 +1,6 @@
 @echo off
+REM Set the code page to UTF-8 to handle Unicode filenames
+chcp 65001 > nul
 echo ===================================
 echo BRAIN Expression Template Decoder
 echo ===================================
@@ -18,7 +20,7 @@ echo The app will automatically install any missing dependencies.
 echo.
 
 REM Run the Flask application
-python app.py
+python "运行打开我.py"
 
 REM Keep window open if there was an error
 if errorlevel 1 (

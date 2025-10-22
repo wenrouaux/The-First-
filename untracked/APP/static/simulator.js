@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     refreshLogFiles();
     setupFormValidation();
     loadSimulatorDefaults();
+    generateAndSetBatchName();
 });
 
 /**
@@ -74,6 +75,26 @@ function loadSimulatorDefaults() {
     const concurrentCount = localStorage.getItem('simulator_concurrent');
     if (concurrentCount) {
         document.getElementById('concurrentCount').value = concurrentCount;
+    }
+}
+
+/**
+ * Generate a unique batch name based on the current timestamp and set it.
+ */
+function generateAndSetBatchName() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    
+    const batchName = `Batch_${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+    
+    const batchNameInput = document.getElementById('batchName');
+    if (batchNameInput) {
+        batchNameInput.value = batchName;
     }
 }
 
@@ -296,8 +317,23 @@ async function runSimulator() {
             })
         );
 
+        let batchName = document.getElementById('batchName').value.trim();
+        if (!batchName) {
+            // Fallback to generate a name if it's empty for any reason
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            batchName = `Batch_${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+            document.getElementById('batchName').value = batchName;
+        }
+
         const payload = {
             files: fileContents,
+            batchName: batchName,
             username: document.getElementById('username').value,
             password: document.getElementById('password').value,
             concurrentCount: parseInt(document.getElementById('concurrentCount').value),

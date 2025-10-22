@@ -392,7 +392,7 @@ async def run_simulations_and_get_hashes(wqbs, expressions_with_settings, concur
         print(f"✓ 已转换为多重回测(multi-simulatioin)格式. ({original_count} -> {len(expressions_to_run)})")
     else:
         expressions_to_run = expressions_with_settings
-    
+
     print(f"🚀 开始回测 {len(expressions_to_run)} 个回测槽 (并发数: {concurrent_count})...")
     
     # Log multi-sim info if applicable
@@ -404,11 +404,42 @@ async def run_simulations_and_get_hashes(wqbs, expressions_with_settings, concur
         wqbs.logger.info(multi_sim_msg)
         wqbs.logger.info("="*80)
 
-    resps = await wqbs.concurrent_simulate(
-        expressions_to_run,
-        concurrent_count,
-        log_gap=10
-    )
+    # --- Monkey-patching the check_simulation_status for dynamic sleep ---
+    original_check_status = wqb.check_simulation_status
+
+    async def custom_check_simulation_status(session, location, logger, log_gap):
+        start_time = time.time()
+        while True:
+            resp = await session.get(location)
+            if resp.status != 200:
+                return resp
+            
+            message = resp.json()
+            progress = message.get('progress', 0)
+            
+            # Dynamic sleep logic
+            sleep_time = 60 if progress <= 0.35 else 5
+            
+            if progress >= 1:
+                return resp
+            
+            if int(time.time() - start_time) % log_gap == 0:
+                logger.info(f"Simulation at {progress*100:.1f}%, sleeping for {sleep_time}s...")
+            
+            await asyncio.sleep(sleep_time)
+
+    wqb.check_simulation_status = custom_check_simulation_status
+    # --- End of monkey-patching ---
+
+    try:
+        resps = await wqbs.concurrent_simulate(
+            expressions_to_run,
+            concurrent_count,
+            log_gap=10
+        )
+    finally:
+        # Restore the original function to avoid side effects
+        wqb.check_simulation_status = original_check_status
 
     successful_hashes = []
     alpha_ids = []

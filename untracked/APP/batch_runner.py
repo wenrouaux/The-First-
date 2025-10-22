@@ -20,6 +20,7 @@ async def main():
     parser.add_argument('--manifest', required=True, help="Path to a manifest file containing the list of JSON file paths.")
     parser.add_argument('--username', required=True, help="BRAIN username.")
     parser.add_argument('--password', required=True, help="BRAIN password.")
+    parser.add_argument('--batch_name', required=True, help="Unique name for this batch run, used for checkpointing.")
     parser.add_argument('--concurrent', type=int, default=3, help="Number of concurrent simulations.")
     parser.add_argument('--multi-sim', action='store_true', help="Enable multi-simulation mode.")
     parser.add_argument('--alphas-per-slot', type=int, default=3, help="Number of alphas per slot for multi-simulation.")
@@ -58,6 +59,7 @@ async def main():
         processor = BatchProcessor(
             wqbs=wqbs,
             file_paths=file_paths,
+            batch_name=args.batch_name,
             concurrent_count=args.concurrent,
             use_multi_sim=args.multi_sim,
             alpha_count_per_slot=args.alphas_per_slot
